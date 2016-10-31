@@ -66,7 +66,7 @@ class CollisionAvoidance(Behavior):
     def __init__(self, priority, sensobs):
         super(CollisionAvoidance, self).__init__(priority=priority)
         self.add_sensobs(sensobs)
-        self.frontDistance = None
+        self.frontDistance = 7
 
     def sense_and_act(self):
         self.frontDistance = self.sensobs[0].get_value()
@@ -77,6 +77,6 @@ class CollisionAvoidance(Behavior):
 
     
 class FollowLine(Behavior):
-
+    pass
 class TracObject(Behavior):
-
+    pass
