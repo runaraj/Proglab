@@ -35,15 +35,17 @@ class BBCON:
         #Should perform at least the following actions each calls:
         #Update all sensobs, behaviors. Invoke arbitrator.choose_action
         #Update motobs, wait, reset sensobs
+
         for sens in self.sensobs:
             sens.update
 
-        #TODO behaviors
+        for behav in self.behaviors:
+            behav.update
 
         self.arbitrator.choose_action
 
         for motor in self.motobs:
-            #motor.update
+            motor.update
 
         waitSeconds = 1
         self.wait(waitSeconds)
