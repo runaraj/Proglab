@@ -8,9 +8,14 @@ class sensob:
             self.sensor_values.append(sensor.update)
 
     def get_values(self):
+        if len(self.sensors) == 0:
+            raise Exception("No sensors")
+        elif len(self.sensor_values) == 0:
+            self.update()
         return self.sensor_values
 
 
     def set_sensors(self, newSensors):
         for sens in newSensors:
             self.sensors.append(sens)
+        self.update()
