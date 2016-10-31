@@ -19,3 +19,8 @@ class sensob:
         for sens in newSensors:
             self.sensors.append(sens)
         self.update()
+
+    def reset_sensors(self):
+        for sens in self.sensors:
+            sens.reset
+        self.sensor_values.clear()
