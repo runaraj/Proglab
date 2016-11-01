@@ -5,6 +5,7 @@ class Motob:
 
     def __init__(self):
         self.motors = []    # list of motors whose settings will be determined
+        # TODO change this from list to one object
         self.value = None   # a holder of the most recent MR sent to the motob
         # value = (direction, degree) e.g (L, 30)=> turn 30 degrees to the left
 
@@ -22,6 +23,6 @@ class Motob:
         if self.value[1] == 'R':
             for motor in self.motors:
                 motor.set_right_dir(self.value[1])
-
+        # TODO Set appropriate speeds for various angles
         # Set left/right speed (dc)
         # Set right/left dir (is_forward) # Either the actual value or forward/backward
