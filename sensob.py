@@ -5,7 +5,7 @@ class sensob:
     def update(self): #force the sensob to fetch the relevant sensor value(s) and convert them into the pre-processed sensob value
         self.sensor_values.clear()
         for sensor in self.sensors:
-            self.sensor_values.append(sensor.update)
+            self.sensor_values.append(sensor.update())
 
     def get_values(self):
         if len(self.sensors) == 0:
@@ -22,5 +22,5 @@ class sensob:
 
     def reset_sensors(self):
         for sens in self.sensors:
-            sens.reset
+            sens.reset()
         self.sensor_values.clear()
