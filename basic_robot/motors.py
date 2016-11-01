@@ -77,7 +77,7 @@ class Motors():
         self.set_right_speed(self.dc)
 
     # Val should be a 2-element vector with values for the left and right motor speeds, both in the range [-1, 1].
-    def set_value(self, val,dur=None):
+    def set_value(self, val, dur=None):
         left_val = int(self.max * val[0])
         right_val = int(self.max * val[1])
 
