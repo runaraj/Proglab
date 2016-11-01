@@ -70,12 +70,16 @@ class CollisionAvoidance(Behavior):
 
     def sense_and_act(self):
         self.frontDistance = self.sensobs[0].get_value()
+        self.give_recommendation()
         return self.frontDistance
 
+    def give_recommendation(self):
+        pass
 
 
 
-    
+
+
 class FollowLine(Behavior):
     pass
 class TracObject(Behavior):
