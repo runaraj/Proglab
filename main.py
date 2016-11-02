@@ -1,11 +1,11 @@
 from behavior import CollisionAvoidance
-
 from sensob import sensob
 
 #from basic_robot import *
 from motors import Motors
 from ultrasonic import Ultrasonic
 from zumo_button import ZumoButton
+from motob import Motob
 
 
 
@@ -22,6 +22,11 @@ def test():
         ultra.update()
         tall = ultra.get_value()
     print(tall)
+
+def test2():
+    motob = Motob(Motors())
+    wait = input("Press any key to run L:10")
+    motob.update(('L', 10))
 
 
 
