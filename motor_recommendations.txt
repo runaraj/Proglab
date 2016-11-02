@@ -8,6 +8,6 @@ format: (retning, grader) L/R/F/B
 
 (L,10) blir dette en for liten justering?
 (L,30) liten sving
-(L,45) større sving
-(L,90) nødvendig?
+(L,45) stÃ¸rre sving
+(L,90) nÃ¸dvendig?
 (L,180) why not lisms
