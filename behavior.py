@@ -136,7 +136,21 @@ class CollisionAvoidance(Behavior): #do I need memory?
 class FollowLine(Behavior):
     pass
 class TrackObject(Behavior):
+    #1 sensob = [ultrasonic, camera]
+    #dersom ikke aktiv: Camera skal ikke ta bilder
+    #bruker ultrasonic i consider activation => dersom et objekt er foran => aktiver og sjekk Camera
+    #I consider_deavtivation: dersom Camera ikke ser noe av interesse=> deaktiver
 
     def __init__(self, priority, sensobs):
         super(TrackObject, self).__init__(priority=priority, sensobs=sensobs)
+        self.frontDistance = 0
+        self.image = None
+
+
+    def consider_activation(self):
+        pass
+
+
+    def checkFront(self):
+
 
