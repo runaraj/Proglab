@@ -24,9 +24,9 @@ class BBCON:
     def wait(self,seconds):
         time.sleep(seconds)
 
-    def deactivate_behavior(self, behaviorIndex):#remove an existing behavior from the active behaviors list.
+    def deactivate_behavior(self, behavior):#remove an existing behavior from the active behaviors list.
         try:
-            self.active_behaviors.remove(behaviorIndex)
+            self.active_behaviors.remove(behavior)
         except IndexError:
             print("Invalid index")
             pass

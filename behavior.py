@@ -2,7 +2,8 @@
 
 
 class Behavior:
-
+    #HUSK BEHAVIORS SKAL IKKE OPPDATERE SENSOB/SENSORER BARE HENTE VERDIENE
+    #BBCON OPPDATERER SENSORENE I STARTEN AV HVERT TIMESTEP
 
     def __init__(self, priority, sensobs):
         self.bbcon = None
@@ -11,15 +12,15 @@ class Behavior:
         self.motor_recommendations = []
         self.active_flag = False
         self.halt_request = None
-        self.priority = priority
-        self.match_degree = 0
-        self.weight = 0
-        self.value = 0
+        self.priority = priority #brukes til å beregne weight [er statisk]
+        self.match_degree = 0 #tall mellom [0,1], brukes til å beregne weight, sier noe om hvor viktig MRen er
+        self.weight = 0 #brukes av arbitrator til aa velge handling
+        #self.value = 0 ???
         self.add_sensobs(sensobs)
 
     def set_bbcon(self, bbcon):
-        self.bbcon = bbcon
-        self.bbcon_index = bbcon.behaviors.index(self)
+        self.bbcon = bbcon #setter peker til bbcon
+        self.bbcon_index = bbcon.behaviors.index(self) #brukes til aktivering/deaktivering
 
     # OBS! SENSOBS MÅ ADDES/REMOVES SOM LISTE
     def add_sensobs(self, sensobs):
@@ -69,7 +70,6 @@ class Behavior:
     def determine_match_degree(self):
         pass
 
-
     def sense_and_act(self):
         self.get_sensob_data()
         self.check_bbcon_data()
@@ -85,9 +85,10 @@ class Behavior:
 
 class CollisionAvoidance(Behavior): #do I need memory?
     #I have 1 sensob that has sensors=[ultrasonic, IRProximity]
+    #dersom sidesensorer oppdager noe, sett flagg for at andre behaviors ikke kan svinge den veien?
 
     def __init__(self, priority, sensobs):
-        super(CollisionAvoidance, self).__init__(priority=priority)
+        super(CollisionAvoidance, self).__init__(priority=priority, sensobs=sensobs)
         self.frontDistance = None
         self.right = False
         self.left = False
@@ -101,7 +102,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
         self.left = values[1][1]
 
 
-    def frontCollisionImminent(self): #checks for frontalContact
+    def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
         if self.frontDistance < 2:
             return True
         return False
@@ -110,11 +111,21 @@ class CollisionAvoidance(Behavior): #do I need memory?
         #no crashes in sight => low match degree
         #side crashes in sight mid-tier degree
         #front crash in sight => high-tier degree
-
-
-
-
-        return ("F", 0)
+        direction = True #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
+        if self.frontCollisionImminent():
+            if self.left or direction:
+                recomm = ("R", 15)
+            elif self.right or not direction:
+                recomm = ("L", 15)
+            else:
+                pass #kan eventuelt bruke direction her istedenfor over
+        else:
+            if self.left:
+                pass
+            elif self.right:
+                pass
+            else:
+                return ("F", 0) #dersom det ikke er fare for kollisjon
 
 
 
@@ -124,5 +135,8 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
 class FollowLine(Behavior):
     pass
-class TracObject(Behavior):
-    pass
+class TrackObject(Behavior):
+
+    def __init__(self, priority, sensobs):
+        super(TrackObject, self).__init__(priority=priority, sensobs=sensobs)
+
