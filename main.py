@@ -1,6 +1,8 @@
 from behavior import CollisionAvoidance
 from behavior import FollowLine
 from sensob import Sensob
+from bbcon import BBCON
+from arbitrator import Arbitrator
 
 #from basic_robot import *
 from motors import Motors
@@ -8,6 +10,7 @@ from ultrasonic import Ultrasonic
 from zumo_button import ZumoButton
 from motob import Motob
 from reflectance_sensors import ReflectanceSensors
+from irproximity_sensor import IRProximitySensor
 
 
 
@@ -92,3 +95,39 @@ def test5():
         if count==12:
             break
 
+
+def test6():
+
+    ZumoButton().wait_for_press()
+    sensor = Ultrasonic()
+    sensor2 = IRProximitySensor()
+    m = Motors()
+    motob = Motob(m)
+
+    sensob = Sensob()
+    sensob.set_sensors([sensor, sensor2])
+
+    behavior = CollisionAvoidance(1, [sensob])
+
+def fullTest():
+    ZumoButton().wait_for_press()
+    arb = Arbitrator()
+
+
+
+    m = Motors()
+    motob = Motob(m)
+
+    sensor = Ultrasonic()
+    sensor2 = IRProximitySensor()
+    sensob = Sensob()
+    sensob.set_sensors([sensor, sensor2])
+
+    behavior = CollisionAvoidance(1, [sensob])
+
+    bbcon = BBCON(arbitrator=arb)
+
+    bbcon.add_behavior(behavior)
+    bbcon.add_sensob(sensob)
+
+    bbcon.run_one_timestep()

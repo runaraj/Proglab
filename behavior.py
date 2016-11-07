@@ -100,15 +100,10 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
     def get_sensob_data(self):
 
-
-        #self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
-        #values = self.sensobs[0].get_values()
-        #self.frontDistance = values[0]
-
-        #self.right = values[1][0]
-        #self.left = values[1][1]
-        print("values:", self.sensobs[0].get_values())
-        self.frontDistance = self.sensobs[0].get_values()[0]
+        values = self.sensobs[0].get_values()
+        self.frontDistance = values[0]
+        self.right = values[1][0]
+        self.left = values[1][1]
         print("frontDist:",self.frontDistance)
 
 
@@ -123,10 +118,12 @@ class CollisionAvoidance(Behavior): #do I need memory?
         #front crash in sight => high-tier degree
         direction = self.direction #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
-            if self.left or direction:
+            if self.frontDistance<2.5:
                 recomm = ("B", 0)
+            elif self.left or direction:
+                recomm = ("R", 30)
             elif self.right or not direction:
-                recomm = ("B", 0)
+                recomm = ("L", 30)
             else:
                 pass #kan bruke direction her istedenfor
         else:
@@ -145,6 +142,10 @@ class CollisionAvoidance(Behavior): #do I need memory?
     def determine_match_degree(self):
         if self.frontCollisionImminent():
             self.match_degree = 0.9
+        elif self.motor_recommendations[0][0]=="L" or self.motor_recommendations[0][0]=="R":
+            self.match_degree = 0.5
+        else:
+            self.match_degree = 0.25
 
 class FollowLine(Behavior):
 
