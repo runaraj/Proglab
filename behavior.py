@@ -125,7 +125,9 @@ class CollisionAvoidance(Behavior): #do I need memory?
             elif self.right:
                 pass
             else:
-                return ("F", 0) #dersom det ikke er fare for kollisjon
+                recomm = ("F", 0) #dersom det ikke er fare for kollisjon
+        self.motor_recommendations.clear()
+        self.motor_recommendations.append(recomm)
 
 
 
@@ -152,5 +154,5 @@ class TrackObject(Behavior):
 
 
     def checkFront(self):
-
+        pass
 
