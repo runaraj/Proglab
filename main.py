@@ -57,6 +57,11 @@ def test4():
 
     behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
     print("Behavior sensob:", behavior.sensobs)
+    count = 0
     while True:
         behavior.update()
         motob.update(behavior.motor_recommendations[0])
+        count +=1
+        if count==6:
+            break
+
