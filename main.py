@@ -1,5 +1,5 @@
 from behavior import CollisionAvoidance
-from sensob import Sensob
+from sensob import sensob
 
 #from basic_robot import *
 from motors import Motors
@@ -53,7 +53,7 @@ def test4():
     m = Motors()
     M = Motob(m)
     s = Ultrasonic()
-    S = Sensob()
+    S = sensob()
     S.set_sensors([s])
     b = CollisionAvoidance(1, S)
     while True:
