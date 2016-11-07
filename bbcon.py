@@ -37,15 +37,15 @@ class BBCON:
         #Update motobs, wait, reset sensobs
 
         for sens in self.sensobs:
-            sens.update
+            sens.update()
 
         for behav in self.behaviors:
-            behav.update
+            behav.update()
 
-        self.arbitrator.choose_action
+        motor_recomm = self.arbitrator.choose_action
 
         for motor in self.motobs:
-            motor.update
+            motor.update(motor_recomm)
 
         waitSeconds = 1
         self.wait(waitSeconds)
