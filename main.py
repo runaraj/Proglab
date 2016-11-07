@@ -1,14 +1,11 @@
 from behavior import CollisionAvoidance
-from behavior import FollowLine
-from sensob import sensob
+from sensob import Sensob
 
 #from basic_robot import *
 from motors import Motors
 from ultrasonic import Ultrasonic
 from zumo_button import ZumoButton
 from motob import Motob
-from reflectance_sensors import ReflectanceSensors
-
 
 
 
@@ -38,7 +35,6 @@ def test3():
 
 
 
-
 def dancer():
     ZumoButton().wait_for_press()
     m = Motors()
@@ -54,24 +50,20 @@ def dancer():
 def test4():
     ZumoButton().wait_for_press()
     m = Motors()
-    M = Motob(m)
-    s = Ultrasonic()
-    S = sensob()
-    S.set_sensors([s])
-    b = CollisionAvoidance(1, S)
+    motob = Motob(m)
+    sensor = Ultrasonic()
+    sensob = Sensob()
+    sensob.set_sensors([sensor])
+
+    behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
+    print("Behavior sensob:", behavior.sensobs)
+    count = 0
     while True:
-        b.update()
-        M.update(b.motor_recommendations[0])
+        sensob.update()
+        behavior.update()
+        motob.update(behavior.motor_recommendations[0])
+        print("hei")
+        count +=1
+        if count==6:
+            break
 
-def test5():
-    ZumoButton().wait_for_press()
-
-    motob = Motob(Motors())
-
-    senOb = sensob()
-    senOb.set_sensors(ReflectanceSensors())
-
-    linefollower = FollowLine(senOb)
-    while True:
-        linefollower.update()
-        motob.update(linefollower.motor_recommendations[0])

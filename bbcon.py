@@ -44,6 +44,8 @@ class BBCON:
 
         motor_recomm = self.arbitrator.choose_action
 
+        #OBS! Motor programmet "pauser" mens motoren er igang
+        #finnes fiks til dette?
         for motor in self.motobs:
             motor.update(motor_recomm)
 

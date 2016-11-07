@@ -10,7 +10,7 @@ class Behavior:
         self.bbcon_index = None
         self.sensobs = []
         self.motor_recommendations = []
-        self.active_flag = False
+        self.active_flag = True
         self.halt_request = None
         self.priority = priority #brukes til å beregne weight [er statisk]
         self.match_degree = 0 #tall mellom [0,1], brukes til å beregne weight, sier noe om hvor viktig MRen er
@@ -98,15 +98,21 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
 
     def get_sensob_data(self):
-        self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
-        values = self.sensobs[0].get_values()
-        self.frontDistance = values[0]
+
+
+        #self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
+        #values = self.sensobs[0].get_values()
+        #self.frontDistance = values[0]
+
         #self.right = values[1][0]
         #self.left = values[1][1]
+        print("values:", self.sensobs[0].get_values())
+        self.frontDistance = self.sensobs[0].get_values()[0]
+        print("frontDist:",self.frontDistance)
 
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
-        if self.frontDistance < 2:
+        if self.frontDistance < 5:
             return True
         return False
 
@@ -117,11 +123,11 @@ class CollisionAvoidance(Behavior): #do I need memory?
         direction = True #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
             if self.left or direction:
-                recomm = ("R", 15)
-            elif self.right or not direction:
-                recomm = ("L", 15)
-            else:
                 recomm = ("B", 0)
+            elif self.right or not direction:
+                recomm = ("B", 0)
+            else:
+                pass #kan bruke direction her istedenfor
         else:
             if self.left:
                 pass
