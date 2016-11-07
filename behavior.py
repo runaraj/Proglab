@@ -95,6 +95,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
         self.frontDistance = None
         self.right = False
         self.left = False
+        self.direction = True
 
 
     def get_sensob_data(self):
@@ -120,7 +121,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
         #no crashes in sight => low match degree
         #side crashes in sight mid-tier degree
         #front crash in sight => high-tier degree
-        direction = True #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
+        direction = self.direction #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
             if self.left or direction:
                 recomm = ("B", 0)
@@ -135,6 +136,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
                 pass
             else:
                 recomm = ("F", 0) #dersom det ikke er fare for kollisjon
+        self.direction = (not direction)
         self.motor_recommendations.clear()
         self.motor_recommendations.append(recomm)
 
@@ -146,8 +148,8 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
 class FollowLine(Behavior):
 
-    def __init__(self, sensob):
-        self.add_sensobs(sensob)
+    def __init__(self,priority, sensob):
+        super(FollowLine, self).__init__(priority=priority, sensobs=sensob)
 
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()
