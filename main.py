@@ -67,3 +67,16 @@ def test4():
         if count==6:
             break
 
+def test5():
+    ZumoButton().wait_for_press()
+
+    motob = Motob(Motors())
+
+    senOb = sensob()
+    senOb.set_sensors(ReflectanceSensors())
+
+    linefollower = FollowLine(senOb)
+    while True:
+        linefollower.update()
+        motob.update(linefollower.motor_recommendations[0])
+
