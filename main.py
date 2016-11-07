@@ -1,5 +1,5 @@
 from behavior import CollisionAvoidance
-from sensob import sensob
+from sensob import Sensob
 
 #from basic_robot import *
 from motors import Motors
@@ -28,6 +28,12 @@ def test2():
     wait = input("Press any key to run L:10")
     motob.update(('L', 10))
 
+def test3():
+    ZumoButton().wait_for_press()
+    m = Motors()
+    m.set_value((1,0), dur=2)
+
+
 
 
 def dancer():
@@ -40,3 +46,16 @@ def dancer():
     m.backward(.3,2.5)
     m.set_value([.5,.1],10)
     m.set_value([-.5,-.1],10)
+
+
+def test4():
+    ZumoButton().wait_for_press()
+    m = Motors()
+    M = Motob(m)
+    s = Ultrasonic()
+    S = Sensob()
+    S.set_sensors([s])
+    b = CollisionAvoidance(1, S)
+    while True:
+        b.update()
+        M.update(b.motor_recommendations[0])

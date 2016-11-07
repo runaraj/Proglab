@@ -98,8 +98,8 @@ class CollisionAvoidance(Behavior): #do I need memory?
         self.sensobs[0].update()
         values = self.sensobs[0].get_values()
         self.frontDistance = values[0]
-        self.right = values[1][0]
-        self.left = values[1][1]
+        #self.right = values[1][0]
+        #self.left = values[1][1]
 
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
@@ -118,7 +118,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
             elif self.right or not direction:
                 recomm = ("L", 15)
             else:
-                pass #kan eventuelt bruke direction her istedenfor over
+                recomm = ("B", 0)
         else:
             if self.left:
                 pass
