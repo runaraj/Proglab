@@ -1,4 +1,4 @@
-
+import sensob
 
 
 class Behavior:
@@ -56,7 +56,10 @@ class Behavior:
 
 
     def get_sensob_data(self):
-        pass
+        sensobData = []
+        for sensob in self.sensobs:
+            sensobData.append(sensob.get_values())
+        return sensobData
 
     def check_bbcon_data(self):
         pass
@@ -95,10 +98,12 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
 
     def get_sensob_data(self):
-        self.sensobs[0].update()
-        print("Sensobs: ", self.sensobs)
-        #values = self.sensobs[0].get_values()
-        #self.frontDistance = values[0]
+
+
+        self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
+        values = self.sensobs[0].get_values()
+        self.frontDistance = values[0]
+
         #self.right = values[1][0]
         #self.left = values[1][1]
         print("values:", self.sensobs[0].get_values())
@@ -140,7 +145,34 @@ class CollisionAvoidance(Behavior): #do I need memory?
             self.match_degree = 0.9
 
 class FollowLine(Behavior):
-    pass
+
+    def __init__(self, sensob):
+        self.add_sensobs(sensob)
+
+    def give_recommendation(self):
+        sensorArray = self.get_sensob_data()
+
+        lineLeft = (sensorArray[1] + sensorArray[2] + sensorArray[3])/3
+        lineMiddle = (sensorArray[3] + sensorArray[4])/2
+        lineRight = (sensorArray[4] + sensorArray[5]+sensorArray[6])/3
+
+        if lineLeft < lineMiddle and lineLeft < lineRight:
+            motoRec = ("R", 15)
+        elif lineRight < lineMiddle and lineRight < lineLeft:
+            motoRec = ("L", 15)
+        else:
+            motoRec = ("F", 0)
+        self.motor_recommendations.clear()
+        self.motor_recommendations.append(motoRec)
+
+    def determine_match_degree(self):
+        if self.motor_recommendations[0][0] == "R" or self.motor_recommendations[0][0] == "L":
+            self.match_degree = 0.9
+        else:
+            self.match_degree = 0.4
+
+
+
 class TrackObject(Behavior):
     #1 sensob = [ultrasonic, camera]
     #dersom ikke aktiv: Camera skal ikke ta bilder
