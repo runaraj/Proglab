@@ -155,16 +155,20 @@ class FollowLine(Behavior):
         sensorArray = self.get_sensob_data()[0][0]
         print("sensor Array:", sensorArray)
 
-        lineLeft = (sensorArray[0] + sensorArray[1] + sensorArray[2])/3
-        lineRight = (sensorArray [3] + sensorArray[4] + sensorArray[5])/3
+
+        #nå brukes ikke de to midterse sensorene
+        lineLeft = (sensorArray[0] + sensorArray[1])/2
+        lineRight = (sensorArray[4] + sensorArray[5])/2
         lineDiff = abs(lineLeft-lineRight)
 
         print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
 
-        if 0.05 < lineDiff and lineLeft < lineRight:
-            motoRec = ("R", 15)
-        elif 0.05 < lineDiff and lineRight < lineLeft:
+
+        #grensene her kan endres
+        if 0.03 < lineDiff and lineLeft < lineRight:
             motoRec = ("L", 15)
+        elif 0.03 < lineDiff and lineRight < lineLeft:
+            motoRec = ("R", 15)
         else:
             motoRec = ("F", 0)
         self.motor_recommendations.clear()

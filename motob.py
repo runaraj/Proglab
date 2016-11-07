@@ -13,7 +13,7 @@ class Motob:
         self.operationalize()
 
     def operationalize(self):  # convert a MR into 1 or more motor settings, and send them to corresponding motor
-        duration = 0.5
+        duration = 0.5 #Funker med felles duration?
         if self.value[0] == 'L':
             self.motor.set_left_dir(self.value[1])
             #-- TEST --#

@@ -71,15 +71,24 @@ def test4():
             break
 
 def test5():
+
     ZumoButton().wait_for_press()
+    m = Motors()
+    motob = Motob(m)
+    sensor = Ultrasonic()
 
-    motob = Motob(Motors())
+    sensob = Sensob()
+    sensob.set_sensors([sensor])
 
-    senOb = Sensob()
-    senOb.set_sensors(ReflectanceSensors())
-
-    linefollower = FollowLine(senOb)
+    behavior = CollisionAvoidance(1, [sensob])
+    print("Behavior sensob:", behavior.sensobs)
+    count = 0
     while True:
-        linefollower.update()
-        motob.update(linefollower.motor_recommendations[0])
+        sensob.update()
+        behavior.update()
+        #print("MR:", behavior.get_sensob_data())
+        motob.update(behavior.motor_recommendations[0])
+        count +=1
+        if count==12:
+            break
 

@@ -10,11 +10,10 @@ class Sensob:
 
     def update(self): #force the sensob to fetch the relevant sensor value(s) and convert them into the pre-processed sensob value
         self.sensor_values.clear()
-        print("sensob sensor:", self.sensors)
         for sensor in self.sensors:
             sensor.update()
             self.sensor_values.append(sensor.get_value())
-        print("fra sensob:", self.sensor_values)
+        print("Verdier i sensob:", self.sensor_values)
 
     def get_values(self):
         if len(self.sensors) == 0:
