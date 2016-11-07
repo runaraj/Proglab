@@ -37,6 +37,9 @@ class Motob:
             if self.value[1] == 90:
                 self.motor.set_value((0.2, 0.2))
             # ----------#
+        if self.value[0] == "F":
+            self.motor.forward(dur=2)
+        
 
         # TODO Set appropriate speeds for various angles
         # Set left/right speed (dc)
