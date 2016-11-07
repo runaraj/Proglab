@@ -100,9 +100,9 @@ class CollisionAvoidance(Behavior): #do I need memory?
     def get_sensob_data(self):
 
 
-        self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
-        values = self.sensobs[0].get_values()
-        self.frontDistance = values[0]
+        #self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
+        #values = self.sensobs[0].get_values()
+        #self.frontDistance = values[0]
 
         #self.right = values[1][0]
         #self.left = values[1][1]

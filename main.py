@@ -59,8 +59,10 @@ def test4():
     print("Behavior sensob:", behavior.sensobs)
     count = 0
     while True:
+        sensob.update()
         behavior.update()
         motob.update(behavior.motor_recommendations[0])
+        print("hei")
         count +=1
         if count==6:
             break
