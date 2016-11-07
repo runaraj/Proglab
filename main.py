@@ -50,23 +50,24 @@ def dancer():
 
 
 def test4():
+    sensor = ReflectanceSensors()
     ZumoButton().wait_for_press()
     m = Motors()
     motob = Motob(m)
-    sensor = Ultrasonic()
+
     sensob = Sensob()
     sensob.set_sensors([sensor])
 
-    behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
+    behavior = FollowLine(1, [sensob])
     print("Behavior sensob:", behavior.sensobs)
     count = 0
     while True:
         sensob.update()
         behavior.update()
+        #print("MR:", behavior.get_sensob_data())
         motob.update(behavior.motor_recommendations[0])
-        print("hei")
         count +=1
-        if count==6:
+        if count==5:
             break
 
 def test5():

@@ -152,20 +152,25 @@ class FollowLine(Behavior):
         super(FollowLine, self).__init__(priority=priority, sensobs=sensob)
 
     def give_recommendation(self):
-        sensorArray = self.get_sensob_data()
+        sensorArray = self.get_sensob_data()[0][0]
+        print("sensor Array:", sensorArray)
 
-        lineLeft = (sensorArray[0] + sensorArray[1] + sensorArray[2])/3
+        lineLeft = (sensorArray[0] + sensorArray[1])/2
         lineMiddle = (sensorArray[2] + sensorArray[3])/2
-        lineRight = (sensorArray[3] + sensorArray[4] + sensorArray[5])/3
+        lineRight = (sensorArray[4] + sensorArray[5])/2
+        print("Left:", lineLeft, "Middle:", lineMiddle, "Right:", lineRight)
 
         if lineLeft < lineMiddle and lineLeft < lineRight:
             motoRec = ("R", 15)
         elif lineRight < lineMiddle and lineRight < lineLeft:
             motoRec = ("L", 15)
+        elif lineMiddle > lineLeft and lineMiddle > lineRight:
+            motoRec = ("F", 0)
         else:
             motoRec = ("F", 0)
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
+        print(self.motor_recommendations)
 
     def determine_match_degree(self):
         if self.motor_recommendations[0][0] == "R" or self.motor_recommendations[0][0] == "L":
