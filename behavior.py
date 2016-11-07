@@ -118,9 +118,9 @@ class CollisionAvoidance(Behavior): #do I need memory?
         direction = True #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
             if self.left or direction:
-                recomm = ("R", 15)
+                recomm = ("B", 0)
             elif self.right or not direction:
-                recomm = ("L", 15)
+                recomm = ("B", 0)
             else:
                 pass #kan bruke direction her istedenfor
         else:
