@@ -154,9 +154,9 @@ class FollowLine(Behavior):
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()
 
-        lineLeft = (sensorArray[1] + sensorArray[2] + sensorArray[3])/3
-        lineMiddle = (sensorArray[3] + sensorArray[4])/2
-        lineRight = (sensorArray[4] + sensorArray[5]+sensorArray[6])/3
+        lineLeft = (sensorArray[0] + sensorArray[1] + sensorArray[2])/3
+        lineMiddle = (sensorArray[2] + sensorArray[3])/2
+        lineRight = (sensorArray[3] + sensorArray[4] + sensorArray[5])/3
 
         if lineLeft < lineMiddle and lineLeft < lineRight:
             motoRec = ("R", 15)
