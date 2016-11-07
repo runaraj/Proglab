@@ -17,25 +17,25 @@ class Motob:
             self.motor.set_left_dir(self.value[1])
             #-- TEST --#
             if self.value[1] == 10:
-                self.motor.set_value((0.1, 0.2))
+                self.motor.set_value((0.1, 0.2), 10)
             if self.value[1] == 15:
-                self.motor.set_value((0.2, 0.2))
+                self.motor.set_value((0.2, 0.2), 10)
             if self.value[1] == 30:
-                self.motor.set_value((0.1, 0.2))
+                self.motor.set_value((0.1, 0.2), 10)
             if self.value[1] == 90:
-                self.motor.set_value((0.2, 0.2))
+                self.motor.set_value((0.2, 0.2), 10)
             #----------#
         if self.value[0] == 'R':
             #-- TEST --#
             self.motor.set_right_dir(self.value[1])
             if self.value[1] == 10:
-                self.motor.set_value((0.2, 0.1))
+                self.motor.set_value((0.2, 0.1), 10)
             if self.value[1] == 15:
-                self.motor.set_value((0.2, 0.2))
+                self.motor.set_value((0.2, 0.2), 10)
             if self.value[1] == 30:
-                self.motor.set_value((0.2, 0.1))
+                self.motor.set_value((0.2, 0.1), 10)
             if self.value[1] == 90:
-                self.motor.set_value((0.2, 0.2))
+                self.motor.set_value((0.2, 0.2), 10)
             # ----------#
 
         # TODO Set appropriate speeds for various angles
