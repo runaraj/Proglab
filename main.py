@@ -1,4 +1,5 @@
 from behavior import CollisionAvoidance
+from behavior import FollowLine
 from sensob import sensob
 
 #from basic_robot import *
@@ -6,6 +7,8 @@ from motors import Motors
 from ultrasonic import Ultrasonic
 from zumo_button import ZumoButton
 from motob import Motob
+from reflectance_sensors import ReflectanceSensors
+
 
 
 
@@ -59,3 +62,16 @@ def test4():
     while True:
         b.update()
         M.update(b.motor_recommendations[0])
+
+def test5():
+    ZumoButton().wait_for_press()
+
+    motob = Motob(Motors())
+
+    senOb = sensob()
+    senOb.set_sensors(ReflectanceSensors())
+
+    linefollower = FollowLine(senOb)
+    while True:
+        linefollower.update()
+        motob.update(linefollower.motor_recommendations[0])
