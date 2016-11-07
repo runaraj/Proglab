@@ -40,7 +40,7 @@ class Motob:
         if self.value[0] == "F":
             self.motor.forward(dur=2)
         if self.value[0] == "B":
-            self.motor.bakcward(dur=2)
+            self.motor.backward(dur=2)
         
 
         # TODO Set appropriate speeds for various angles
