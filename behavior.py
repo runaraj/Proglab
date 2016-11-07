@@ -10,7 +10,7 @@ class Behavior:
         self.bbcon_index = None
         self.sensobs = []
         self.motor_recommendations = []
-        self.active_flag = False
+        self.active_flag = True
         self.halt_request = None
         self.priority = priority #brukes til å beregne weight [er statisk]
         self.match_degree = 0 #tall mellom [0,1], brukes til å beregne weight, sier noe om hvor viktig MRen er
@@ -96,14 +96,18 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
     def get_sensob_data(self):
         self.sensobs[0].update()
-        values = self.sensobs[0].get_values()
-        self.frontDistance = values[0]
+        print("Sensobs: ", self.sensobs)
+        #values = self.sensobs[0].get_values()
+        #self.frontDistance = values[0]
         #self.right = values[1][0]
         #self.left = values[1][1]
+        print("values:", self.sensobs[0].get_values())
+        self.frontDistance = self.sensobs[0].get_values()[0]
+        print("frontDist:",self.frontDistance)
 
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
-        if self.frontDistance < 2:
+        if self.frontDistance < 5:
             return True
         return False
 
@@ -118,7 +122,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
             elif self.right or not direction:
                 recomm = ("L", 15)
             else:
-                recomm = ("B", 0)
+                pass #kan bruke direction her istedenfor
         else:
             if self.left:
                 pass
