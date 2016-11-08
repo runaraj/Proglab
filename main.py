@@ -98,25 +98,40 @@ def systemTest():
     ZumoButton().wait_for_press()
     motor = Motors()
     ultra = Ultrasonic()
-    proxim = IRProximitySensor
-    arb = Arbitrator
+    proxim = IRProximitySensor()
+
 
     motob = Motob(motor)
     sensob = Sensob()
     sensob.set_sensors([ultra, proxim])
     behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
 
+    arb = Arbitrator(motob=motob)
+
     bbcon = BBCON(arbitrator=arb, motob=motob)
     bbcon.add_behavior(behavior)
     bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
-    print("bbcon", bbcon)
-    print("behavior", behavior)
-    print("sensob", sensob)
+    #print(bbcon)
+    #print("behavior", behavior)
+    #print("sensob", sensob)
+    print(sensob.get_values())
 
 
     bbcon.run_one_timestep()
 
-    print("bbcon", bbcon)
-    print("behavior", behavior)
-    print("sensob", sensob)
+    print(sensob.get_values())
+    #print("bbcon", bbcon)
+    #print("behavior", behavior)
+    #print("sensob", sensob)
+
+
+
+def sensorTest():
+    ZumoButton().wait_for_press()
+    sensor = Ultrasonic()
+    count = 0
+    while count < 5:
+        sensor.update()
+        print(sensor.get_value())
+        count += 1

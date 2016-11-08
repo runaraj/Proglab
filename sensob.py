@@ -18,7 +18,7 @@ class Sensob:
         for sensor in self.sensors:
             sensor.update()
             self.sensor_values.append(sensor.get_value())
-        print("Verdier i sensob:", self.sensor_values)
+
 
     def get_values(self):
         if len(self.sensors) == 0:

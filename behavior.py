@@ -94,7 +94,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
     def __init__(self, priority, sensobs):
         super(CollisionAvoidance, self).__init__(priority=priority, sensobs=sensobs)
-        self.frontDistance = None
+        self.frontDistance = 0
         self.right = False
         self.left = False
         self.direction = True
@@ -106,12 +106,13 @@ class CollisionAvoidance(Behavior): #do I need memory?
         front = "FrontDistance: ", self.frontDistance
         right = "Right: ", self.right
         left = "Left: ", self.left
-        return (front + "\n" + right + "\n" + left)
+        return front + "\n" + right + "\n" + left
 
     def get_sensob_data(self):
 
-        values = self.sensobs.get_values()
-        self.frontDistance = values[0][0]
+        values = self.sensobs[0].get_values()
+        print(values)
+        self.frontDistance = values[0]
         self.right = values[1][0]
         self.left = values[1][1]
 
@@ -121,7 +122,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
             return True
         return False
 
-    def give_recommendation(self):
+    def give_recommendation(self): #RIGHT ELLER LEFT SETTE FLAGG SLIK AT ANDRE BEHAVIORS IKKE KAN SVINGE DEN VEIEN
         #no crashes in sight => low match degree
         #side crashes in sight mid-tier degree
         #front crash in sight => high-tier degree
@@ -135,9 +136,9 @@ class CollisionAvoidance(Behavior): #do I need memory?
                 pass #kan bruke direction her istedenfor
         else:
             if self.left:
-                pass
+                recomm = ("F", 0)
             elif self.right:
-                pass
+                recomm = ("F", 0)
             else:
                 recomm = ("F", 0) #dersom det ikke er fare for kollisjon
         self.direction = (not direction)
