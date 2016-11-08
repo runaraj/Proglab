@@ -12,6 +12,7 @@ class Arbitrator:
         self.weight_list = []
 
 
+
     def choose_action(self): #returns the MR from the behavior whose recommendation will be chosen
         self.update_active_list()
         self.update_weight_list()

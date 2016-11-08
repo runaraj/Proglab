@@ -8,6 +8,11 @@ class Sensob:
     sensors = [] #One or more of the sensors associated with this class
     sensor_values = [] #values associated with the sensors
 
+    def __str__(self):
+        ors = "Sensors: ", self.sensors
+        val = "Values: ", self.sensor_values
+        return ors + "\n" + val
+
     def update(self): #force the sensob to fetch the relevant sensor value(s) and convert them into the pre-processed sensob value
         self.sensor_values.clear()
         for sensor in self.sensors:

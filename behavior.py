@@ -18,6 +18,8 @@ class Behavior:
         #self.value = 0 ???
         self.add_sensobs(sensobs)
 
+
+
     def set_bbcon(self, bbcon):
         self.bbcon = bbcon #setter peker til bbcon
         self.bbcon_index = bbcon.behaviors.index(self) #brukes til aktivering/deaktivering
@@ -99,6 +101,12 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
         self.count_time = 0
 
+
+    def __str__(self):
+        front = "FrontDistance: ", self.frontDistance
+        right = "Right: ", self.right
+        left = "Left: ", self.left
+        return (front + "\n" + right + "\n" + left)
 
     def get_sensob_data(self):
 

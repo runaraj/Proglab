@@ -8,6 +8,13 @@ class BBCON:
     motobs = [] #a list of all motor objects used by the bbcon
     arbitrator = None #the arbitrator object that will resolve actuator requests produced by the behaviors.
 
+    def __str__(self):
+        b = "Behaviors: ", self.behaviors
+        a = "Active: ", self.active_behaviors
+        s = "Sensobs: ", self.sensobs
+        m = "Motobs: ", self.motobs
+        return (b + "\n" + a + "\n" + s + "\n" + m)
+
     def __init__(self, arbitrator, motob):
         self.arbitrator = arbitrator
         self.motobs.append(motob)
@@ -46,6 +53,7 @@ class BBCON:
 
         for behav in self.behaviors:
             behav.update()
+        self.arbitrator.update_active_list()
 
         motor_recomm = self.arbitrator.choose_action
 

@@ -110,5 +110,13 @@ def systemTest():
     bbcon.add_behavior(behavior)
     bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
+    print("bbcon", bbcon)
+    print("behavior", behavior)
+    print("sensob", sensob)
+
 
     bbcon.run_one_timestep()
+    
+    print("bbcon", bbcon)
+    print("behavior", behavior)
+    print("sensob", sensob)
