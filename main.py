@@ -4,11 +4,13 @@ from sensob import Sensob
 
 #from basic_robot import *
 from motors import Motors
+from irproximity_sensor import IRProximitySensor
 from ultrasonic import Ultrasonic
 from zumo_button import ZumoButton
 from motob import Motob
 from reflectance_sensors import ReflectanceSensors
-
+from arbitrator import Arbitrator
+from bbcon import BBCON
 
 
 def test():
@@ -92,3 +94,21 @@ def test5():
         if count==12:
             break
 
+def systemTest():
+    ZumoButton().wait_for_press()
+    motor = Motors()
+    ultra = Ultrasonic()
+    proxim = IRProximitySensor
+    arb = Arbitrator
+
+    motob = Motob(motor)
+    sensob = Sensob()
+    sensob.set_sensors([ultra, proxim])
+    behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
+
+    bbcon = BBCON(arbitrator=arb, motob=motob)
+    bbcon.add_behavior(behavior)
+    bbcon.activate_behavior(0)
+    bbcon.add_sensob(sensob)
+
+    bbcon.run_one_timestep()
