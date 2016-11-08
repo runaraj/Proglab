@@ -116,7 +116,7 @@ def systemTest():
 
 
     bbcon.run_one_timestep()
-    
+
     print("bbcon", bbcon)
     print("behavior", behavior)
     print("sensob", sensob)
