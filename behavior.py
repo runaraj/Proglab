@@ -18,6 +18,8 @@ class Behavior:
         #self.value = 0 ???
         self.add_sensobs(sensobs)
 
+
+
     def set_bbcon(self, bbcon):
         self.bbcon = bbcon #setter peker til bbcon
         self.bbcon_index = bbcon.behaviors.index(self) #brukes til aktivering/deaktivering
@@ -92,19 +94,28 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
     def __init__(self, priority, sensobs):
         super(CollisionAvoidance, self).__init__(priority=priority, sensobs=sensobs)
-        self.frontDistance = None
+        self.frontDistance = 0
         self.right = False
         self.left = False
         self.direction = True
 
+        self.count_time = 0
+
+
+
+    def __str__(self):
+        front = "FrontDistance: ", self.frontDistance
+        right = "Right: ", self.right
+        left = "Left: ", self.left
+        return front + "\n" + right + "\n" + left
 
     def get_sensob_data(self):
 
         values = self.sensobs[0].get_values()
+        print(values)
         self.frontDistance = values[0]
         self.right = values[1][0]
         self.left = values[1][1]
-        print("frontDist:",self.frontDistance)
 
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
@@ -112,7 +123,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
             return True
         return False
 
-    def give_recommendation(self):
+    def give_recommendation(self): #RIGHT ELLER LEFT SETTE FLAGG SLIK AT ANDRE BEHAVIORS IKKE KAN SVINGE DEN VEIEN
         #no crashes in sight => low match degree
         #side crashes in sight mid-tier degree
         #front crash in sight => high-tier degree
@@ -128,9 +139,9 @@ class CollisionAvoidance(Behavior): #do I need memory?
                 pass #kan bruke direction her istedenfor
         else:
             if self.left:
-                pass
+                recomm = ("F", 0)
             elif self.right:
-                pass
+                recomm = ("F", 0)
             else:
                 recomm = ("F", 0) #dersom det ikke er fare for kollisjon
         self.direction = (not direction)
@@ -146,6 +157,23 @@ class CollisionAvoidance(Behavior): #do I need memory?
             self.match_degree = 0.5
         else:
             self.match_degree = 0.25
+
+    def consider_deactivation(self):
+        if self.frontDistance > 40 and not self.left and not self.right:
+            self.count_time += 1
+        else:
+            self.count_time = 0
+        if self.count_time == 10:
+            self.count_time = 0
+            self.deactivate()
+
+    def consider_activation(self):
+        self.count_time += 1
+        if self.count_time == 3:
+            self.get_sensob_data()
+            if self.frontDistance<30 or self.right or self.left:
+                self.activate()
+            self.count_time = 0
 
 class FollowLine(Behavior):
 

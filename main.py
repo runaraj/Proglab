@@ -2,15 +2,15 @@ from behavior import CollisionAvoidance
 from behavior import FollowLine
 from sensob import Sensob
 from bbcon import BBCON
-from arbitrator import Arbitrator
 
 #from basic_robot import *
 from motors import Motors
+from irproximity_sensor import IRProximitySensor
 from ultrasonic import Ultrasonic
 from zumo_button import ZumoButton
 from motob import Motob
 from reflectance_sensors import ReflectanceSensors
-from irproximity_sensor import IRProximitySensor
+from arbitrator import Arbitrator
 
 
 
@@ -95,39 +95,45 @@ def test5():
         if count==12:
             break
 
-
-def test6():
-
+def systemTest():
     ZumoButton().wait_for_press()
-    sensor = Ultrasonic()
-    sensor2 = IRProximitySensor()
-    m = Motors()
-    motob = Motob(m)
+    motor = Motors()
+    ultra = Ultrasonic()
+    proxim = IRProximitySensor()
 
+
+    motob = Motob(motor)
     sensob = Sensob()
-    sensob.set_sensors([sensor, sensor2])
+    sensob.set_sensors([ultra, proxim])
+    behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
 
-    behavior = CollisionAvoidance(1, [sensob])
+    arb = Arbitrator(motob=motob)
 
-def fullTest():
-    ZumoButton().wait_for_press()
-    arb = Arbitrator()
-
-
-
-    m = Motors()
-    motob = Motob(m)
-
-    sensor = Ultrasonic()
-    sensor2 = IRProximitySensor()
-    sensob = Sensob()
-    sensob.set_sensors([sensor, sensor2])
-
-    behavior = CollisionAvoidance(1, [sensob])
-
-    bbcon = BBCON(arbitrator=arb)
-
+    bbcon = BBCON(arbitrator=arb, motob=motob)
     bbcon.add_behavior(behavior)
+    bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
+    #print(bbcon)
+    #print("behavior", behavior)
+    #print("sensob", sensob)
+    print(sensob.get_values())
+
 
     bbcon.run_one_timestep()
+
+    print(sensob.get_values())
+    #print("bbcon", bbcon)
+    #print("behavior", behavior)
+    #print("sensob", sensob)
+
+
+
+def sensorTest():
+    ZumoButton().wait_for_press()
+    sensor = Ultrasonic()
+    count = 0
+    while count < 5:
+        sensor.update()
+        print(sensor.get_value())
+        count += 1
+

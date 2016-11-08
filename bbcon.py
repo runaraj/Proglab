@@ -8,9 +8,18 @@ class BBCON:
     motobs = [] #a list of all motor objects used by the bbcon
     arbitrator = None #the arbitrator object that will resolve actuator requests produced by the behaviors.
 
+
+    def __str__(self):
+        b = "Behaviors: " + str(self.behaviors)
+        a = "Active: " + str(self.active_behaviors)
+        s = "Sensobs: ", str(self.sensobs)
+        m = "Motobs: ", str(self.motobs)
+        return str(b + "\n" + a + "\n" + s + "\n" + m)
+
     def __init__(self, arbitrator, motob):
         self.arbitrator = arbitrator
         self.motobs.append(motob)
+        self.arbitrator.set_bbcon(bbcon=self)
 
     def add_behavior(self, behavior):#append a newly-created behavior onto the behaviors list.
         self.behaviors.append(behavior)
@@ -45,13 +54,15 @@ class BBCON:
 
         for behav in self.behaviors:
             behav.update()
+        self.arbitrator.update_active_list()
 
-        motor_recomm = self.arbitrator.choose_action
+        motor_recomm = self.arbitrator.choose_action()
+        print(motor_recomm)
 
         #OBS! Motor programmet "pauser" mens motoren er igang
         #finnes fiks til dette?
-        for motor in self.motobs:
-            motor.update(motor_recomm)
+        for motob in self.motobs:
+            motob.update(motor_recomm)
 
         waitSeconds = 1
         self.wait(waitSeconds)

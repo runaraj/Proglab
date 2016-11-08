@@ -5,12 +5,15 @@ import random
 class Arbitrator:
 
 
-    def __init__(self, bbcon, motob):
-        self.bbcon = bbcon
+    def __init__(self, motob):
+        self.bbcon = None
         self.motob = motob
         self.active_list = []#aktive behaviors har samme index i denne og weight listen
         self.weight_list = []
 
+
+    def set_bbcon(self,bbcon):
+        self.bbcon = bbcon
 
     def choose_action(self): #returns the MR from the behavior whose recommendation will be chosen
         self.update_active_list()
@@ -19,7 +22,7 @@ class Arbitrator:
         choice = random.uniform(0.0, weight_sum)
         for weight in range(len(self.weight_list)):
             if choice <= self.weight_list[weight]:
-                 return self.active_list[weight].motor_recommendations #listen med MR fra den valgte behavioren
+                 return self.active_list[weight].motor_recommendations[0] #listen med MR fra den valgte behavioren
 
 
 
