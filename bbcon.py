@@ -7,14 +7,11 @@ class BBCON:
     sensobs = [] #a list of all sensory objects used by the bbcon
     motobs = [] #a list of all motor objects used by the bbcon
     arbitrator = None #the arbitrator object that will resolve actuator requests produced by the behaviors.
+    right = False
+    left = False #disse settes av collisionAvoidance, men brukes av alle slik at en annen behavior ikke kan svinge inn i en vegg
 
 
-    def __str__(self):
-        b = "Behaviors: " + str(self.behaviors)
-        a = "Active: " + str(self.active_behaviors)
-        s = "Sensobs: ", str(self.sensobs)
-        m = "Motobs: ", str(self.motobs)
-        return str(b + "\n" + a + "\n" + s + "\n" + m)
+
 
     def __init__(self, arbitrator, motob):
         self.arbitrator = arbitrator

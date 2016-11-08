@@ -22,7 +22,7 @@ class Arbitrator:
         choice = random.uniform(0.0, weight_sum)
         for weight in range(len(self.weight_list)):
             if choice <= self.weight_list[weight]:
-                 return self.active_list[weight].motor_recommendations[0] #listen med MR fra den valgte behavioren
+                 return self.active_list[weight].motor_recommendations[0] #MR fra den valgte behavioren
 
 
 

@@ -102,12 +102,10 @@ class CollisionAvoidance(Behavior): #do I need memory?
         self.count_time = 0
 
 
+    def set_bbcon_sideflags(self):
+        self.bbcon.left = self.left
+        self.bbcon.right = self.right
 
-    def __str__(self):
-        front = "FrontDistance: ", self.frontDistance
-        right = "Right: ", self.right
-        left = "Left: ", self.left
-        return front + "\n" + right + "\n" + left
 
     def get_sensob_data(self):
 
@@ -116,6 +114,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
         self.frontDistance = values[0]
         self.right = values[1][0]
         self.left = values[1][1]
+        self.set_bbcon_sideflags()
 
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
@@ -222,11 +221,16 @@ class TrackObject(Behavior):
         super(TrackObject, self).__init__(priority=priority, sensobs=sensobs)
         self.frontDistance = 0
         self.image = None
+        self.left = False
+        self.right = False
 
 
     def consider_activation(self):
         pass
 
+    def check_bbcon_data(self):
+        self.left = self.bbcon.left
+        self.right = self.bbcon.right
 
     def checkFront(self):
         pass
