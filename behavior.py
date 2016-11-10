@@ -183,13 +183,17 @@ class FollowLine(Behavior):
         sensorArray = self.get_sensob_data()[0][0]
         print("sensor Array:", sensorArray)
 
+        print("sensor Array lefts:", sensorArray[0],sensorArray[1])
+        print("sensor Array middles:", sensorArray[2], sensorArray[3])
+        print("sensor Array rights: ", sensorArray[4], sensorArray[5])
+        print()
 
         #nå brukes ikke de to midterse sensorene
         lineLeft = (sensorArray[0] + sensorArray[1])/2
         lineRight = (sensorArray[4] + sensorArray[5])/2
         lineDiff = abs(lineLeft-lineRight)
 
-        print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
+        #print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
 
 
         #grensene her kan endres

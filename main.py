@@ -3,6 +3,8 @@ from behavior import FollowLine
 from sensob import Sensob
 from bbcon import BBCON
 
+import time
+
 # from basic_robot import *
 from motors import Motors
 from irproximity_sensor import IRProximitySensor
@@ -54,7 +56,15 @@ def dancer():
     m.set_value([.5,.1],10)
     m.set_value([-.5,-.1],10)
 
-
+def test45():
+    ZumoButton().wait_for_press()
+    sensor = IRProximitySensor()
+    count = 0
+    while count < 10:
+        sensor.update()
+        print(sensor.get_value())
+        count += 1
+        time.sleep(2.5)
 def test4():
     sensor = ReflectanceSensors()
     ZumoButton().wait_for_press()
@@ -63,7 +73,7 @@ def test4():
 
     sensob = Sensob()
     sensob.set_sensors([sensor])
-
+    print(sensor.get_value())
     behavior = FollowLine(1, [sensob])
     #print("Behavior sensob:", behavior.sensobs)
     count = 0
@@ -73,7 +83,8 @@ def test4():
         #print("MR:", behavior.get_sensob_data())
         #motob.update(behavior.motor_recommendations[0])
         count +=1
-        if count==20:
+        time.sleep(3)
+        if count==10:
             break
 
 def test5():
