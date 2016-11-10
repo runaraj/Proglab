@@ -3,7 +3,7 @@ from behavior import FollowLine
 from sensob import Sensob
 from bbcon import BBCON
 
-#from basic_robot import *
+# from basic_robot import *
 from motors import Motors
 from irproximity_sensor import IRProximitySensor
 from ultrasonic import Ultrasonic
@@ -11,7 +11,6 @@ from zumo_button import ZumoButton
 from motob import Motob
 from reflectance_sensors import ReflectanceSensors
 from arbitrator import Arbitrator
-
 
 
 def test():
@@ -28,10 +27,14 @@ def test():
         tall = ultra.get_value()
     print(tall)
 
+
 def test2():
+    ZumoButton().wait_for_press()
     motob = Motob(Motors())
-    wait = input("Press any key to run L:10")
-    motob.update(('L', 10))
+    deg = input("Skriv antall grader: ")
+    dir = input("Skriv retning L/R: ")
+    motob.update((dir, int(deg)))
+
 
 def test3():
     ZumoButton().wait_for_press()
