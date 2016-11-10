@@ -4,14 +4,18 @@ import imager2 as Imager
 from reflectance_sensors import ReflectanceSensors
 from irproximity_sensor import IRProximitySensor
 
-class sensob:
+class Sensob:
     sensors = [] #One or more of the sensors associated with this class
     sensor_values = [] #values associated with the sensors
+
+
 
     def update(self): #force the sensob to fetch the relevant sensor value(s) and convert them into the pre-processed sensob value
         self.sensor_values.clear()
         for sensor in self.sensors:
-            self.sensor_values.append(sensor.update())
+            sensor.update()
+            self.sensor_values.append(sensor.get_value())
+
 
     def get_values(self):
         if len(self.sensors) == 0:

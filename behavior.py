@@ -10,13 +10,15 @@ class Behavior:
         self.bbcon_index = None
         self.sensobs = []
         self.motor_recommendations = []
-        self.active_flag = False
+        self.active_flag = True
         self.halt_request = None
         self.priority = priority #brukes til å beregne weight [er statisk]
         self.match_degree = 0 #tall mellom [0,1], brukes til å beregne weight, sier noe om hvor viktig MRen er
         self.weight = 0 #brukes av arbitrator til aa velge handling
         #self.value = 0 ???
         self.add_sensobs(sensobs)
+
+
 
     def set_bbcon(self, bbcon):
         self.bbcon = bbcon #setter peker til bbcon
@@ -92,43 +94,56 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
     def __init__(self, priority, sensobs):
         super(CollisionAvoidance, self).__init__(priority=priority, sensobs=sensobs)
-        self.frontDistance = None
+        self.frontDistance = 0
         self.right = False
         self.left = False
+        self.direction = True
+
+        self.count_time = 0
+
+
+    def set_bbcon_sideflags(self):
+        self.bbcon.left = self.left
+        self.bbcon.right = self.right
 
 
     def get_sensob_data(self):
-        self.sensobs[0].update() #TODO: Dette er vel strengt tatt ikke lov?
+
         values = self.sensobs[0].get_values()
+        print(values)
         self.frontDistance = values[0]
-        #self.right = values[1][0]
-        #self.left = values[1][1]
+        self.right = values[1][0]
+        self.left = values[1][1]
+        self.set_bbcon_sideflags()
 
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
-        if self.frontDistance < 2:
+        if self.frontDistance < 5:
             return True
         return False
 
-    def give_recommendation(self):
+    def give_recommendation(self): #RIGHT ELLER LEFT SETTE FLAGG SLIK AT ANDRE BEHAVIORS IKKE KAN SVINGE DEN VEIEN
         #no crashes in sight => low match degree
         #side crashes in sight mid-tier degree
         #front crash in sight => high-tier degree
-        direction = True #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
+        direction = self.direction #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
-            if self.left or direction:
-                recomm = ("R", 15)
-            elif self.right or not direction:
-                recomm = ("L", 15)
-            else:
+            if self.frontDistance<2.5:
                 recomm = ("B", 0)
+            elif self.left or direction:
+                recomm = ("R", 30)
+            elif self.right or not direction:
+                recomm = ("L", 30)
+            else:
+                pass #kan bruke direction her istedenfor
         else:
             if self.left:
-                pass
+                recomm = ("F", 0)
             elif self.right:
-                pass
+                recomm = ("F", 0)
             else:
                 recomm = ("F", 0) #dersom det ikke er fare for kollisjon
+        self.direction = (not direction)
         self.motor_recommendations.clear()
         self.motor_recommendations.append(recomm)
 
@@ -137,27 +152,56 @@ class CollisionAvoidance(Behavior): #do I need memory?
     def determine_match_degree(self):
         if self.frontCollisionImminent():
             self.match_degree = 0.9
+        elif self.motor_recommendations[0][0]=="L" or self.motor_recommendations[0][0]=="R":
+            self.match_degree = 0.5
+        else:
+            self.match_degree = 0.25
+
+    def consider_deactivation(self):
+        if self.frontDistance > 40 and not self.left and not self.right:
+            self.count_time += 1
+        else:
+            self.count_time = 0
+        if self.count_time == 10:
+            self.count_time = 0
+            self.deactivate()
+
+    def consider_activation(self):
+        self.count_time += 1
+        if self.count_time == 3:
+            self.get_sensob_data()
+            if self.frontDistance<30 or self.right or self.left:
+                self.activate()
+            self.count_time = 0
 
 class FollowLine(Behavior):
 
-    def __init__(self, sensob):
-        self.add_sensobs(sensob)
+    def __init__(self,priority, sensob):
+        super(FollowLine, self).__init__(priority=priority, sensobs=sensob)
 
     def give_recommendation(self):
-        sensorArray = self.get_sensob_data()
+        sensorArray = self.get_sensob_data()[0][0]
+        print("sensor Array:", sensorArray)
 
-        lineLeft = (sensorArray[1] + sensorArray[2] + sensorArray[3])/3
-        lineMiddle = (sensorArray[3] + sensorArray[4])/2
-        lineRight = (sensorArray[4] + sensorArray[5]+sensorArray[6])/3
 
-        if lineLeft < lineMiddle and lineLeft < lineRight:
-            motoRec = ("R", 15)
-        elif lineRight < lineMiddle and lineRight < lineLeft:
+        #nå brukes ikke de to midterse sensorene
+        lineLeft = (sensorArray[0] + sensorArray[1])/2
+        lineRight = (sensorArray[4] + sensorArray[5])/2
+        lineDiff = abs(lineLeft-lineRight)
+
+        print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
+
+
+        #grensene her kan endres
+        if 0.03 < lineDiff and lineLeft < lineRight:
             motoRec = ("L", 15)
+        elif 0.03 < lineDiff and lineRight < lineLeft:
+            motoRec = ("R", 15)
         else:
             motoRec = ("F", 0)
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
+        print(self.motor_recommendations)
 
     def determine_match_degree(self):
         if self.motor_recommendations[0][0] == "R" or self.motor_recommendations[0][0] == "L":
@@ -177,11 +221,16 @@ class TrackObject(Behavior):
         super(TrackObject, self).__init__(priority=priority, sensobs=sensobs)
         self.frontDistance = 0
         self.image = None
+        self.left = False
+        self.right = False
 
 
     def consider_activation(self):
         pass
 
+    def check_bbcon_data(self):
+        self.left = self.bbcon.left
+        self.right = self.bbcon.right
 
     def checkFront(self):
         pass

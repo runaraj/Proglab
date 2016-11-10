@@ -13,34 +13,35 @@ class Motob:
         self.operationalize()
 
     def operationalize(self):  # convert a MR into 1 or more motor settings, and send them to corresponding motor
+        duration = 0.5 #Funker med felles duration?
         if self.value[0] == 'L':
             self.motor.set_left_dir(self.value[1])
             #-- TEST --#
             if self.value[1] == 10:
-                self.motor.set_value((0.1, 0.2), 10)
+                self.motor.set_value((0.1, 0.2), duration)
             if self.value[1] == 15:
-                self.motor.set_value((0.2, 0.2), 10)
+                self.motor.set_value((0.2, 0.2), duration)
             if self.value[1] == 30:
-                self.motor.set_value((0.1, 0.2), 10)
+                self.motor.set_value((0.1, 0.2), duration)
             if self.value[1] == 90:
-                self.motor.set_value((0.2, 0.2), 10)
+                self.motor.set_value((0.2, 0.2), duration)
             #----------#
         if self.value[0] == 'R':
             #-- TEST --#
             self.motor.set_right_dir(self.value[1])
             if self.value[1] == 10:
-                self.motor.set_value((0.2, 0.1), 10)
+                self.motor.set_value((0.2, 0.1), duration)
             if self.value[1] == 15:
-                self.motor.set_value((0.2, 0.2), 10)
+                self.motor.set_value((0.2, 0.2), duration)
             if self.value[1] == 30:
-                self.motor.set_value((0.2, 0.1), 10)
+                self.motor.set_value((0.2, 0.1), duration)
             if self.value[1] == 90:
-                self.motor.set_value((0.2, 0.2), 10)
+                self.motor.set_value((0.2, 0.2), duration)
             # ----------#
         if self.value[0] == "F":
-            self.motor.forward(dur=2)
+            self.motor.forward(dur=duration)
         if self.value[0] == "B":
-            self.motor.bakcward(dur=2)
+            self.motor.backward(dur=duration)
         
 
         # TODO Set appropriate speeds for various angles
