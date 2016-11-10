@@ -201,7 +201,11 @@ class FollowLine(Behavior):
             motoRec = ("F", 0)
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
-        print(self.motor_recommendations)
+        #print(self.motor_recommendations)
+
+
+    def determine_line_placement(self):
+        sensorArray = self.get_sensob_data()[0][0]
 
     def determine_match_degree(self):
         if self.motor_recommendations[0][0] == "R" or self.motor_recommendations[0][0] == "L":

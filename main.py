@@ -62,15 +62,15 @@ def test4():
     sensob.set_sensors([sensor])
 
     behavior = FollowLine(1, [sensob])
-    print("Behavior sensob:", behavior.sensobs)
+    #print("Behavior sensob:", behavior.sensobs)
     count = 0
     while True:
         sensob.update()
         behavior.update()
         #print("MR:", behavior.get_sensob_data())
-        motob.update(behavior.motor_recommendations[0])
+        #motob.update(behavior.motor_recommendations[0])
         count +=1
-        if count==5:
+        if count==20:
             break
 
 def test5():
