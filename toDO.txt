@@ -1,0 +1,5 @@
+motorbevegelse
+FollowLine - hvilke MR som skal gis + vekting + hent right/left flag fra bbcon
+CollisionAviodance - hvilke MR + vekting
+track object - ALT
+timestep lengde
