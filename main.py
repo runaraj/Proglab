@@ -2,6 +2,7 @@ from behavior import CollisionAvoidance
 from behavior import FollowLine
 from sensob import Sensob
 from bbcon import BBCON
+from imager2 import Imager
 
 import time
 
@@ -13,6 +14,7 @@ from zumo_button import ZumoButton
 from motob import Motob
 from reflectance_sensors import ReflectanceSensors
 from arbitrator import Arbitrator
+from camera import Camera
 
 
 def test():
@@ -151,3 +153,13 @@ def sensorTest():
         print(sensor.get_value())
         count += 1
 
+def camTest():
+    ZumoButton().wait_for_press()
+    sensor = Camera()
+
+    sensor.update()
+    pic = sensor.get_value()
+    b = Imager()
+    b.image = pic
+    #b = b.resize(500,500)
+    b.dump_image("test")
