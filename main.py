@@ -140,6 +140,7 @@ def systemTest():
     trackSensob = Sensob()
     trackSensob.set_sensors([ultra, camera])
 
+
     b = CollisionAvoidance(1, [collisionSensob])
     f = FollowLine(1, [lineSensob])
     t = TrackObject(1, [trackSensob])
