@@ -15,7 +15,7 @@ class Motob:
 
     def operationalize(self):  # Convert a MR into 1 or more motor settings, and send them to corresponding motor
         # 15, 30, 90 serves as indicators on how much the robot "turns"
-
+        print("motob: ", self.value)
         if self.value[0] == 'L':
             if self.value[1] == 15:
                 self.motor.set_value((-0.3, 0.3), self.duration/2)

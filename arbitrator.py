@@ -19,7 +19,7 @@ class Arbitrator:
             if self.weighted_active[behaviour] > max_pri:
                 max_pri = self.weighted_active
                 max_behavior = behaviour
-            return max_behavior.motor_reccomendations[0]
+            return max_behavior.motor_recommendations[0]
 
     def update_active_list(self):
         self.weighted_active.clear()

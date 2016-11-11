@@ -63,7 +63,7 @@ class BBCON:
 
         for behav in self.behaviors:
             behav.update()
-        print(self.halt)
+        #print(self.halt)
         if self.halt:
             print("OBJECT FOUND!")
             exit()
@@ -76,6 +76,7 @@ class BBCON:
         #finnes fiks til dette?
         if motor_recomm is not None:
             for motob in self.motobs:
+                print("hei")
                 motob.update(motor_recomm)
 
         waitSeconds = 0.5

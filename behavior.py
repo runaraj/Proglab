@@ -10,7 +10,7 @@ class Behavior:
         self.bbcon_index = None
         self.sensobs = []
         self.motor_recommendations = []
-        self.active_flag = True
+        self.active_flag = False
         self.halt_request = None
         self.priority = priority #brukes til å beregne weight [er statisk]
         self.match_degree = 0 #tall mellom [0,1], brukes til å beregne weight, sier noe om hvor viktig MRen er
@@ -179,10 +179,10 @@ class FollowLine(Behavior):
 
         ## TESTING ##
         print("sensor Array:", sensorArray)
-        print("sensor Array lefts:", sensorArray[0],sensorArray[1])
-        print("sensor Array middles:", sensorArray[2], sensorArray[3])
-        print("sensor Array rights: ", sensorArray[4], sensorArray[5])
-        print()
+        #print("sensor Array lefts:", sensorArray[0],sensorArray[1])
+        #print("sensor Array middles:", sensorArray[2], sensorArray[3])
+        #print("sensor Array rights: ", sensorArray[4], sensorArray[5])
+        #print()
 
         # nå brukes ikke de to midterse sensorene
         lineLeft = (sensorArray[0] + sensorArray[1])/2
@@ -191,7 +191,7 @@ class FollowLine(Behavior):
         lineDiff = abs(lineLeft-lineRight)
 
         # print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
-
+        motoRec = ("F", 0.001)
         # grensene her kan endres
         # if 0.03 < lineDiff and lineLeft < lineRight:
         #    motoRec = ("L", 15)
@@ -262,7 +262,7 @@ class TrackObject(Behavior):
 
     def consider_activation(self):
         self.checkFront()
-        if self.frontDistance < 20:
+        if self.frontDistance < 10:
             self.get_sensob_data()
             self.leftColor, self.rightColor = self.get_colors()
             if self.leftColor+self.rightColor > 3000:
