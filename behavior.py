@@ -20,6 +20,7 @@ class Behavior:
 
 
 
+
     def set_bbcon(self, bbcon):
         self.bbcon = bbcon #setter peker til bbcon
         self.bbcon_index = bbcon.behaviors.index(self) #brukes til aktivering/deaktivering
@@ -121,24 +122,24 @@ class CollisionAvoidance(Behavior):  # do I need memory?
         # no crashes in sight => low match degree
         # side crashes in sight mid-tier degree
         # front crash in sight => high-tier degree
-        recomm = ('F', 0)
+        motoRec = ('F', 0)
         direction = self.direction # dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
             if self.frontDistance < 2.5:
                 if self.left or direction:
-                    recomm = ("R", 90)
+                    motoRec = ("R", 90)
                 elif self.right or not direction:
-                    recomm = ("L", 90)
+                    motoRec = ("L", 90)
                 else:
-                    recomm = ('B', 0)
+                    motoRec = ('B', 0)
             elif self.left or direction:
-                recomm = ("R", 30)
+                motoRec = ("R", 30)
             elif self.right or not direction:
-                recomm = ("L", 30)
+                motoRec = ("L", 30)
 
         self.direction = (not direction)
         self.motor_recommendations.clear()
-        self.motor_recommendations.append(recomm)
+        self.motor_recommendations.append(motoRec)
 
     def determine_match_degree(self):
         if self.frontCollisionImminent():
@@ -147,6 +148,7 @@ class CollisionAvoidance(Behavior):  # do I need memory?
             self.match_degree = 0.25
 
     def consider_deactivation(self):
+        pass
         if self.frontDistance > 40 and not self.left and not self.right:
             self.count_time += 1
         else:
