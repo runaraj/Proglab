@@ -87,10 +87,9 @@ class Behavior:
         return self.weight
 
 
-
-class CollisionAvoidance(Behavior): #do I need memory?
-    #I have 1 sensob that has sensors=[ultrasonic, IRProximity]
-    #dersom sidesensorer oppdager noe, sett flagg for at andre behaviors ikke kan svinge den veien?
+class CollisionAvoidance(Behavior):  # do I need memory?
+    # I have 1 sensob that has sensors = [ultrasonic, IRProximity]
+    # dersom sidesensorer oppdager noe, sett flagg for at andre behaviors ikke kan svinge den veien?
 
     def __init__(self, priority, sensobs):
         super(CollisionAvoidance, self).__init__(priority=priority, sensobs=sensobs)
@@ -101,14 +100,11 @@ class CollisionAvoidance(Behavior): #do I need memory?
 
         self.count_time = 0
 
-
     def set_bbcon_sideflags(self):
         self.bbcon.left = self.left
         self.bbcon.right = self.right
 
-
     def get_sensob_data(self):
-
         values = self.sensobs[0].get_values()
         print(values)
         self.frontDistance = values[0]
@@ -116,44 +112,37 @@ class CollisionAvoidance(Behavior): #do I need memory?
         self.left = values[1][1]
         self.set_bbcon_sideflags()
 
-
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
         if self.frontDistance < 5:
             return True
         return False
 
-    def give_recommendation(self): #RIGHT ELLER LEFT SETTE FLAGG SLIK AT ANDRE BEHAVIORS IKKE KAN SVINGE DEN VEIEN
-        #no crashes in sight => low match degree
-        #side crashes in sight mid-tier degree
-        #front crash in sight => high-tier degree
-        direction = self.direction #dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
+    def give_recommendation(self):  # RIGHT ELLER LEFT SETTE FLAGG SLIK AT ANDRE BEHAVIORS IKKE KAN SVINGE DEN VEIEN
+        # no crashes in sight => low match degree
+        # side crashes in sight mid-tier degree
+        # front crash in sight => high-tier degree
+        recomm = ('F', 0)
+        direction = self.direction # dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
-            if self.frontDistance<2.5:
-                recomm = ("B", 0)
+            if self.frontDistance < 2.5:
+                if self.left or direction:
+                    recomm = ("R", 90)
+                elif self.right or not direction:
+                    recomm = ("L", 90)
+                else:
+                    recomm = ('B', 0)
             elif self.left or direction:
                 recomm = ("R", 30)
             elif self.right or not direction:
                 recomm = ("L", 30)
-            else:
-                pass #kan bruke direction her istedenfor
-        else:
-            if self.left:
-                recomm = ("F", 0)
-            elif self.right:
-                recomm = ("F", 0)
-            else:
-                recomm = ("F", 0) #dersom det ikke er fare for kollisjon
+
         self.direction = (not direction)
         self.motor_recommendations.clear()
         self.motor_recommendations.append(recomm)
 
-
-
     def determine_match_degree(self):
         if self.frontCollisionImminent():
             self.match_degree = 0.9
-        elif self.motor_recommendations[0][0]=="L" or self.motor_recommendations[0][0]=="R":
-            self.match_degree = 0.5
         else:
             self.match_degree = 0.25
 
@@ -174,6 +163,7 @@ class CollisionAvoidance(Behavior): #do I need memory?
                 self.activate()
             self.count_time = 0
 
+
 class FollowLine(Behavior):
 
     def __init__(self,priority, sensob):
@@ -183,32 +173,33 @@ class FollowLine(Behavior):
 
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()[0][0]
-        print("sensor Array:", sensorArray)
 
+        ## TESTING ##
+        print("sensor Array:", sensorArray)
         print("sensor Array lefts:", sensorArray[0],sensorArray[1])
         print("sensor Array middles:", sensorArray[2], sensorArray[3])
         print("sensor Array rights: ", sensorArray[4], sensorArray[5])
         print()
 
-        #nå brukes ikke de to midterse sensorene
+        # nå brukes ikke de to midterse sensorene
         lineLeft = (sensorArray[0] + sensorArray[1])/2
+        line_center = (sensorArray[2] + sensorArray[3])/2
         lineRight = (sensorArray[4] + sensorArray[5])/2
         lineDiff = abs(lineLeft-lineRight)
 
-        #print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
+        # print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
 
-
-        #grensene her kan endres
+        # grensene her kan endres
         if 0.03 < lineDiff and lineLeft < lineRight:
             motoRec = ("L", 15)
         elif 0.03 < lineDiff and lineRight < lineLeft:
             motoRec = ("R", 15)
-        else:
+        elif line_center:
             motoRec = ("F", 0)
+
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
-        #print(self.motor_recommendations)
-
+        # print(self.motor_recommendations)
 
     def determine_line_placement(self):
         sensorArray = self.get_sensob_data()[0][0]
