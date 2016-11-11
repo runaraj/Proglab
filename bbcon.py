@@ -11,6 +11,10 @@ class BBCON:
     right = False
     left = False #disse settes av collisionAvoidance, men brukes av alle slik at en annen behavior ikke kan svinge inn i en vegg
     camera = False
+    halt = False
+
+    def get_halt_request(self):
+        self.halt = True
 
 
     def activate_camera(self):
@@ -58,9 +62,12 @@ class BBCON:
 
         for behav in self.behaviors:
             behav.update()
-        self.arbitrator.update_active_list()
 
-        motor_recomm = self.arbitrator.choose_action()
+        if self.halt:
+            exit()
+        else:
+            self.arbitrator.update_active_list()
+            motor_recomm = self.arbitrator.choose_action()
         print(motor_recomm)
 
         #OBS! Motor programmet "pauser" mens motoren er igang

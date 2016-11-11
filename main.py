@@ -83,11 +83,11 @@ def test4():
     while True:
         sensob.update()
         behavior.update()
-        #print("MR:", behavior.get_sensob_data())
+        print("MR:", behavior.motor_recommendations)
         motob.update(behavior.motor_recommendations[0])
         count += 1
-        # time.sleep(3)
-        if count == 10:
+        #time.sleep(3)
+        if count == 15:
             break
 
 

@@ -77,7 +77,7 @@ class Behavior:
 
     def sense_and_act(self):
         self.get_sensob_data()
-        self.check_bbcon_data()
+        #self.check_bbcon_data()
         self.give_recommendation()
         self.send_halt_request()
         self.determine_match_degree()
@@ -190,12 +190,20 @@ class FollowLine(Behavior):
         # print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
 
         # grensene her kan endres
-        if 0.03 < lineDiff and lineLeft < lineRight:
+        '''if 0.03 < lineDiff and lineLeft < lineRight:
             motoRec = ("L", 15)
         elif 0.03 < lineDiff and lineRight < lineLeft:
             motoRec = ("R", 15)
         elif line_center:
+            motoRec = ("F", 0)'''
+        if line_center<lineLeft and line_center<lineRight:
             motoRec = ("F", 0)
+        elif lineLeft<line_center and lineLeft<lineRight:
+            motoRec = ("L", 30)
+        else:
+            motoRec = ("R", 30)
+
+
 
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
@@ -225,6 +233,7 @@ class TrackObject(Behavior):
     def __init__(self, priority, sensobs):
         super(TrackObject, self).__init__(priority=priority, sensobs=sensobs)
         self.frontDistance = 0
+        self.halt_request = False
         self.image = None
         self.left = False
         self.right = False
@@ -268,22 +277,29 @@ class TrackObject(Behavior):
     def give_recommendation(self):
         self.leftColor, self.rightColor = self.get_colors() #antall grønne piksler i l/r bilde
         diff = abs(self.leftColor-self.rightColor)
-
-        if diff < 250:
-            mr = ("F", 0)
+        mr = ("F", 0)
+        if self.frontDistance<5 and (self.left+self.right > 6200):
+            self.halt_request = True
+        elif diff < 250:
+            pass #hva skal være her?
         else:
             if self.leftColor > self.rightColor:
-                if self.left
-                mr = ("L", 15)
+                if not self.left:
+                    mr = ("L", 15)
             else:
-                mr = ("R", 15)
-
+                if not self.right:
+                    mr = ("R", 15)
         self.motor_recommendations.clear()
-        self.motor_recommendations.append(mr)
+        if self.halt_request:
+            self.bbcon.get_halt_request()
+        else:
+            self.motor_recommendations.append(mr)
 
 
     def determine_match_degree(self):
-        if self.motor_recommendations[0][0]
+        if self.motor_recommendations[0][0] == "H":
+            pass
+
 
 
 
