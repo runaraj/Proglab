@@ -1,6 +1,7 @@
 from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageEnhance
+from PIL import ImageOps
 
 
 class Imager():
@@ -26,7 +27,7 @@ class Imager():
         if self.image.mode != self.mode:
             self.image = self.image.convert(self.mode)
 
-    # Save image to a file.  Only if fid has no extension is the type argument used.  When writing to a JPEF
+    # Save image to a file.  Only if fid has no extension is the type argument used.  When writing to a JPEG
     # file, use the extension JPEG, not JPG, which seems to cause some problems.
     def dump_image(self,fid,type='gif'):
         fname = fid.split('.')
@@ -42,6 +43,11 @@ class Imager():
     def get_image_dims(self):
          self.xmax = self.image.size[0]
          self.ymax = self.image.size[1]
+
+
+    #for aa legge ting i senter
+    def get_center_as_tuple(self):
+        return (self.xmax/2, self.ymax/2)
 
     def copy_image_dims(self,im2):
         im2.xmax = self.xmax; im2.ymax = self.ymax
@@ -77,10 +83,14 @@ class Imager():
 
     def map_image2(self,func,image=False):
         im2 = image.copy() if image else self.image.copy()
+        count = 0
         for i in range(self.xmax):
             for j in range(self.ymax):
-                im2.putpixel((i,j),func(im2.getpixel((i,j))))
-        return Imager(image = im2)
+                val = func(im2.getpixel((i,j)))
+                pixel = val[1]
+                count += val[0]
+                im2.putpixel((i,j),pixel)
+        return [count,Imager(image = im2)]
 
     # WTA = winner take all: The dominant color becomes the ONLY color in each pixel.  However, the winner must
     # dominate by having at least thresh fraction of the total.
@@ -94,6 +104,42 @@ class Imager():
                 return (0,0,0)
         return self.map_image2(wta,image)
 
+
+
+    def map_color_wta2(self,image=False,thresh=0.34):
+        image = image if image else self.image
+        def wta(p):
+            s = sum(p); w = max(p)
+            a = p[1]
+            b = p[0]
+            c = p[2]
+            if s > 0 and a==w and a/s>=thresh:
+                return [1, tuple([(x if x == w else 0) for x in p])]
+            else:
+                return [0,(0,0,0)]
+        return self.map_image2(wta,image)
+
+    def map_image22(self,func,image=False):
+        im2 = image.copy() if image else self.image.copy()
+        count = 0
+        for i in range(self.xmax):
+            for j in range(self.ymax):
+                val = func(im2.getpixel((i,j)))
+                count += val
+        return count
+
+    def map_color_wta22(self,image=False,thresh=0.34):
+        image = image if image else self.image
+        def wta(p):
+            s = sum(p); w = max(p)
+            a = p[1]
+            b = p[0]
+            c = p[2]
+            if s > 0 and a==w and a/s>=thresh:
+                return 1
+            else:
+                return 0
+        return self.map_image22(wta,image)
 
     # Note that grayscale uses the RGB triple to define shades of gray.
     def gen_grayscale(self,image=False): return self.scale_colors(image=image,degree=0)
@@ -165,6 +211,73 @@ class Imager():
     def mortun(self,im2,levels=5,scale=0.75):
         return self.tunnel(levels,scale).morph4(im2.tunnel(levels,scale))
 
+
+
+    #def blurr(self,image=False,degree=1):
+    #    image = image if image else self.image
+    #    return Imager(image=ImageEnhance.Color(image).enhance(degree))
+
+
+    def blurr(self, degree):
+        self.image = self.image.filter(ImageFilter.GaussianBlur(radius=degree))
+        return self
+
+    def flip(self):
+        self.image = ImageOps.flip(self.image)
+        return self
+
+    def roundabout_with_blurr(self, rounder, degree, thicknez):
+        self = rounder.blurr(degree).resize(self.xmax, thicknez).concat_vert(self)
+        self = self.concat_vert(rounder.flip().blurr(degree/4).resize(self.xmax, thicknez))
+        rounder.image = rounder.image.rotate(90)
+        self = self.concat_horiz(rounder.blurr(degree/2).resize(thicknez, self.ymax))
+        rounder.image = rounder.image.rotate(180)
+        self = rounder.blurr(1).resize(thicknez, self.ymax).concat_horiz(self)
+        return self
+
+    def opacity(self, image=False, thresh=650):
+        image = image if image else self.image
+
+        def opa(p):
+
+            s = sum(p);
+            w = max(p)
+            if s > thresh:
+                return tuple([0, 0, 0, 0])
+            else:
+                return p
+
+        return self.map_image2(opa, image)
+
+    def shadow(self, image=False, thresh=650):
+        image = image if image else self.image
+
+        def shad(p):
+            s = sum(p);
+            if s < thresh:
+                return tuple([0, 0, 0, 0])
+            else:
+                return p
+
+        return self.map_image2(shad, image)
+
+    def shadowmorph(self, other, xSize, ySize):
+        self = self.resize(xSize, ySize)
+        other = other.resize(xSize, ySize).flip()
+
+        selfShadow = self.shadow()
+        otherShadow = other.shadow()
+
+        part1 = self.concat_vert(otherShadow)
+        part2 = selfShadow.concat_vert(other)
+
+        part1 = part1.morphroll(part2, steps=2)
+
+        return part1
+
+    def colorBalance(self,factorr):
+        self.image = ImageEnhance.Color(self.image).enhance(factor=factorr)
+        return self
 ### *********** TESTS ************************
 
 # Note: the default file paths for these examples are for unix!

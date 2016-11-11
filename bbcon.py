@@ -1,4 +1,5 @@
 import time
+from camera import Camera
 
 class BBCON:
     #Instance variables
@@ -9,9 +10,13 @@ class BBCON:
     arbitrator = None #the arbitrator object that will resolve actuator requests produced by the behaviors.
     right = False
     left = False #disse settes av collisionAvoidance, men brukes av alle slik at en annen behavior ikke kan svinge inn i en vegg
+    camera = False
 
 
-
+    def activate_camera(self):
+        self.camera = True
+    def deactivate_camera(self):
+        self.camera = False
 
     def __init__(self, arbitrator, motob):
         self.arbitrator = arbitrator
@@ -47,6 +52,8 @@ class BBCON:
         #Update motobs, wait, reset sensobs
 
         for sens in self.sensobs:
+            if isinstance(sens, Camera) and not self.camera:
+                continue
             sens.update()
 
         for behav in self.behaviors:

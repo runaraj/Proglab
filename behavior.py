@@ -1,5 +1,5 @@
 import sensob
-
+import finnFarge
 
 class Behavior:
     #HUSK BEHAVIORS SKAL IKKE OPPDATERE SENSOB/SENSORER BARE HENTE VERDIENE
@@ -178,6 +178,8 @@ class FollowLine(Behavior):
 
     def __init__(self,priority, sensob):
         super(FollowLine, self).__init__(priority=priority, sensobs=sensob)
+        self.left = False
+        self.right = False
 
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()[0][0]
@@ -218,6 +220,10 @@ class FollowLine(Behavior):
             self.match_degree = 0.4
 
 
+    def check_bbcon_data(self):
+        self.left = self.bbcon.left
+        self.right = self.bbcon.right
+
 
 class TrackObject(Behavior):
     #1 sensob = [ultrasonic, camera]
@@ -231,15 +237,73 @@ class TrackObject(Behavior):
         self.image = None
         self.left = False
         self.right = False
+        self.leftColor = 0
+        self.rightColor = 0
 
 
     def consider_activation(self):
-        pass
+        self.checkFront()
+        if self.frontDistance < 20:
+            self.activate()
+
+    def consider_deactivation(self):
+        self.checkFront()
+        pixelcount = 64 * 96
+        totalpixels = pixelcount * 2
+        greenCount = self.leftColor+self.rightColor
+        if self.frontDistance > 20 and (totalpixels-greenCount>pixelcount*1.5):
+            self.deactivate()
+
+
+    def activate(self):
+        super(TrackObject, self).activate()
+        self.bbcon.activate_camera()
+    def deactivate(self):
+        super(TrackObject, self).deactivate()
+        self.bbcon.deactivate_camera()
 
     def check_bbcon_data(self):
         self.left = self.bbcon.left
         self.right = self.bbcon.right
 
     def checkFront(self):
-        pass
+        value = self.sensobs[0].get_values()[0]
+        self.frontDistance = value
 
+
+    def get_sensob_data(self):
+        self.image = self.sensobs[0].get_values()[1]
+
+    def give_recommendation(self):
+        self.leftColor, self.rightColor = self.get_colors() #antall grønne piksler i l/r bilde
+        diff = abs(self.leftColor-self.rightColor)
+
+        if diff < 250:
+            mr = ("F", 0)
+        else:
+            if self.leftColor > self.rightColor:
+                if self.left
+                mr = ("L", 15)
+            else:
+                mr = ("R", 15)
+
+        self.motor_recommendations.clear()
+        self.motor_recommendations.append(mr)
+
+
+    def determine_match_degree(self):
+        if self.motor_recommendations[0][0]
+
+
+
+
+    def get_colors(self):
+        left = finnFarge.left(self.image)
+        right = finnFarge.right(self.image)
+        left = left.resize(64,96)
+        right = right.resize(64,96)
+
+        #ENDRE WTA TIL KUN Å TELLE TRENGER IKKE BILDE => DONE
+        l = left.map_color_wta22(thresh=0.5)
+        r = right.map_color_wta22(thresh=0.5)
+        return l, r
