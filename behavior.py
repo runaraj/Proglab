@@ -125,7 +125,7 @@ class CollisionAvoidance(Behavior):  # do I need memory?
         motoRec = ('F', 0)
         direction = self.direction # dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
-            if self.frontDistance < 3.5:
+            if self.frontDistance < 4.5:
                 if self.left or direction:
                     motoRec = ("R", 90)
                 elif self.right or not direction:
@@ -241,6 +241,7 @@ class TrackObject(Behavior):
         self.right = False
         self.leftColor = 0
         self.rightColor = 0
+        self.count = 0
 
 
     def consider_activation(self):
@@ -254,6 +255,7 @@ class TrackObject(Behavior):
         totalpixels = pixelcount * 2
         greenCount = self.leftColor+self.rightColor
         if self.frontDistance > 20 and (totalpixels-greenCount>pixelcount*1.5):
+            print("DEACTIVATING")
             self.deactivate()
 
 
@@ -275,44 +277,52 @@ class TrackObject(Behavior):
 
     def get_sensob_data(self):
         self.image = self.sensobs[0].get_values()[1]
+        self.image.save("cam.JPEG", format="JPEG")
 
     def give_recommendation(self):
         self.leftColor, self.rightColor = self.get_colors() #antall grønne piksler i l/r bilde
         diff = abs(self.leftColor-self.rightColor)
         mr = ("F", 0)
-        if self.frontDistance<5 and (self.left+self.right > 6200):
+        print("FrontDist: ", self.frontDistance)
+        print("LC: ", self.leftColor)
+        print("RC: ", self.rightColor)
+        if self.frontDistance<5 and (self.leftColor+self.rightColor > 6000):
             self.halt_request = True
-        elif diff < 250:
-            pass #hva skal være her?
+        elif diff < 750 or self.count == 3:
+            mr = ("F", 0)
+            self.count = 0
         else:
             if self.leftColor > self.rightColor:
                 if not self.left:
-                    mr = ("L", 15)
+                    mr = ("L", 30)
             else:
                 if not self.right:
-                    mr = ("R", 15)
+                    mr = ("R", 30)
+            self.count += 1
         self.motor_recommendations.clear()
         if self.halt_request:
+            print("Sending req")
             self.bbcon.get_halt_request()
         else:
             self.motor_recommendations.append(mr)
 
 
     def determine_match_degree(self):
-        if self.motor_recommendations[0][0] == "H":
-            pass
+        #if self.motor_recommendations[0][0] == "H":
+        #    pass
+        self.match_degree = 1
 
 
 
 
 
     def get_colors(self):
-        left = finnFarge.left(self.image)
-        right = finnFarge.right(self.image)
+        left = finnFarge.left("cam.JPEG")
+        right = finnFarge.right("cam.JPEG")
         left = left.resize(64,96)
         right = right.resize(64,96)
 
         #ENDRE WTA TIL KUN Å TELLE TRENGER IKKE BILDE => DONE
-        l = left.map_color_wta22(thresh=0.5)
-        r = right.map_color_wta22(thresh=0.5)
+        l = left.map_color_wta22(thresh=0.45)
+        r = right.map_color_wta22(thresh=0.45)
         return l, r

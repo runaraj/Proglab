@@ -1,5 +1,6 @@
 import time
 from camera import Camera
+from sys import exit
 
 class BBCON:
     #Instance variables
@@ -63,18 +64,20 @@ class BBCON:
 
         for behav in self.behaviors:
             behav.update()
-
+        print(self.halt)
         if self.halt:
+            print("OBJECT FOUND!")
             exit()
         else:
             self.arbitrator.update_active_list()
             motor_recomm = self.arbitrator.choose_action()
-        print(motor_recomm)
+        print("Etter arb: ", motor_recomm)
 
         #OBS! Motor programmet "pauser" mens motoren er igang
         #finnes fiks til dette?
-        for motob in self.motobs:
-            motob.update(motor_recomm)
+        if motor_recomm is not None:
+            for motob in self.motobs:
+                motob.update(motor_recomm)
 
         waitSeconds = 0.5
         self.wait(waitSeconds)
