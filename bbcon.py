@@ -17,7 +17,6 @@ class BBCON:
     def get_halt_request(self):
         self.halt = True
 
-
     def activate_camera(self):
         self.camera = True
     def deactivate_camera(self):

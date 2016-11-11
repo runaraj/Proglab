@@ -126,22 +126,24 @@ def systemTest():
     motor = Motors()
     ultra = Ultrasonic()
     proxim = IRProximitySensor()
-
-
     motob = Motob(motor)
-    arbitrator =Arbitrator(motob=motob)
-
+    arbitrator = Arbitrator(motob)
     sensob = Sensob()
     sensob.set_sensors([ultra, proxim])
 
 
 
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
-    b = CollisionAvoidance(priority=1, sensobs=[sensob])
+    b = CollisionAvoidance(1, sensobs=[sensob])
+    f = FollowLine(1,sensob)
+    t = TrackObject(1, sensob)
     bbcon.add_behavior(b)
-
+    bbcon.add_behavior(f)
+    bbcon.add_behavior(t)
     bbcon.activate_behavior(0)
-    bbcon.add_sensob(sensob)
+    bbcon.activate_behavior(1)
+    bbcon.activate_behavior(2)
+    bbcon.add_sensob([sensob])
 
     while True:
         runTimesteps(bbcon,15)
