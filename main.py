@@ -1,5 +1,6 @@
 from behavior import CollisionAvoidance
 from behavior import FollowLine
+from behavior import TrackObject
 from sensob import Sensob
 from bbcon import BBCON
 from imager2 import Imager
@@ -183,3 +184,27 @@ def camTest():
     b.dump_image("test4", type="JPEG")
 
 
+def trackTest():
+    ZumoButton().wait_for_press()
+    motor = Motors()
+    ultra = Ultrasonic()
+    camera = Camera()
+
+    motob = Motob(motor)
+    arbitrator = Arbitrator(motob=motob)
+
+    sensob = Sensob()
+    sensob.set_sensors([ultra, camera])
+
+    bbcon = BBCON(arbitrator=arbitrator, motob=motob)
+    b = TrackObject(priority=1, sensobs=[sensob])
+    bbcon.add_behavior(b)
+
+    bbcon.activate_behavior(0)
+    bbcon.add_sensob(sensob)
+
+    timesteps = 0
+    while timesteps < 15:
+
+        bbcon.run_one_timestep()
+        timesteps += 1
