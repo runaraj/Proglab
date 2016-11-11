@@ -67,6 +67,7 @@ def test45():
         print(sensor.get_value())
         count += 1
         time.sleep(2.5)
+
 def test4():
     sensor = ReflectanceSensors()
     ZumoButton().wait_for_press()
@@ -83,11 +84,12 @@ def test4():
         sensob.update()
         behavior.update()
         #print("MR:", behavior.get_sensob_data())
-        #motob.update(behavior.motor_recommendations[0])
-        count +=1
-        time.sleep(3)
-        if count==10:
+        motob.update(behavior.motor_recommendations[0])
+        count += 1
+        # time.sleep(3)
+        if count == 10:
             break
+
 
 def test5():
 

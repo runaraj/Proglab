@@ -171,32 +171,33 @@ class FollowLine(Behavior):
 
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()[0][0]
-        print("sensor Array:", sensorArray)
 
+        ## TESTING ##
+        print("sensor Array:", sensorArray)
         print("sensor Array lefts:", sensorArray[0],sensorArray[1])
         print("sensor Array middles:", sensorArray[2], sensorArray[3])
         print("sensor Array rights: ", sensorArray[4], sensorArray[5])
         print()
 
-        #nå brukes ikke de to midterse sensorene
+        # nå brukes ikke de to midterse sensorene
         lineLeft = (sensorArray[0] + sensorArray[1])/2
+        line_center = (sensorArray[2] + sensorArray[3])/2
         lineRight = (sensorArray[4] + sensorArray[5])/2
         lineDiff = abs(lineLeft-lineRight)
 
-        #print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
+        # print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
 
-
-        #grensene her kan endres
+        # grensene her kan endres
         if 0.03 < lineDiff and lineLeft < lineRight:
             motoRec = ("L", 15)
         elif 0.03 < lineDiff and lineRight < lineLeft:
             motoRec = ("R", 15)
-        else:
+        elif line_center:
             motoRec = ("F", 0)
+
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
-        #print(self.motor_recommendations)
-
+        # print(self.motor_recommendations)
 
     def determine_line_placement(self):
         sensorArray = self.get_sensob_data()[0][0]
