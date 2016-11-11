@@ -118,7 +118,7 @@ def runTimesteps(bbcon, timesteps):
     ZumoButton().wait_for_press()
     while timestepNo < timesteps:
         bbcon.run_one_timestep()
-        timesteps += 1
+        timestepNo += 1
 
 
 def systemTest():
@@ -128,14 +128,19 @@ def systemTest():
     proxim = IRProximitySensor()
     motob = Motob(motor)
     arbitrator = Arbitrator(motob)
-    sensob = Sensob()
-    sensob.set_sensors([ultra, proxim])
+    reflectance = ReflectanceSensors
+
+
+    sensobCollision = Sensob()
+    sensobCollision.set_sensors([ultra, proxim])
+    sensobFollowLine = Sensob()
+    sensobFollowLine.set_sensors([reflectance])
 
 
 
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
-    b = CollisionAvoidance(1, sensobs=[sensob])
-    f = FollowLine(1,sensob)
+    b = CollisionAvoidance(1, sensobs=[sensobCollision])
+    f = FollowLine(1,sensobFollowLine)
     t = TrackObject(1, sensob)
     bbcon.add_behavior(b)
     bbcon.add_behavior(f)
