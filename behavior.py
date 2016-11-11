@@ -192,34 +192,25 @@ class FollowLine(Behavior):
         # print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
 
         # grensene her kan endres
-        '''if 0.03 < lineDiff and lineLeft < lineRight:
-            motoRec = ("L", 15)
-        elif 0.03 < lineDiff and lineRight < lineLeft:
-            motoRec = ("R", 15)
-        elif line_center:
-            motoRec = ("F", 0)'''
-        if line_center<lineLeft and line_center<lineRight:
+        # if 0.03 < lineDiff and lineLeft < lineRight:
+        #    motoRec = ("L", 15)
+        # elif 0.03 < lineDiff and lineRight < lineLeft:
+        #    motoRec = ("R", 15)
+        # elif line_center:
+        #    motoRec = ("F", 0)
+        if line_center < lineLeft and line_center < lineRight:
             motoRec = ("F", 0)
-        elif lineLeft<line_center and lineLeft<lineRight:
+        elif lineLeft < line_center and lineLeft < lineRight:
             motoRec = ("L", 30)
         else:
             motoRec = ("R", 30)
-
-
 
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
         # print(self.motor_recommendations)
 
-    def determine_line_placement(self):
-        sensorArray = self.get_sensob_data()[0][0]
-
     def determine_match_degree(self):
-        if self.motor_recommendations[0][0] == "R" or self.motor_recommendations[0][0] == "L":
-            self.match_degree = 0.9
-        else:
-            self.match_degree = 0.4
-
+        self.match_degree = 0.3
 
     def check_bbcon_data(self):
         self.left = self.bbcon.left
@@ -257,7 +248,6 @@ class TrackObject(Behavior):
         if self.frontDistance > 20 and (totalpixels-greenCount>pixelcount*1.5):
             print("DEACTIVATING")
             self.deactivate()
-
 
     def activate(self):
         super(TrackObject, self).activate()
@@ -311,10 +301,6 @@ class TrackObject(Behavior):
         #if self.motor_recommendations[0][0] == "H":
         #    pass
         self.match_degree = 1
-
-
-
-
 
     def get_colors(self):
         left = finnFarge.left("cam.JPEG")

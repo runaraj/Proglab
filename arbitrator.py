@@ -1,43 +1,28 @@
+from collections import defaultdict
 
-
-import random
 
 class Arbitrator:
-
 
     def __init__(self, motob):
         self.bbcon = None
         self.motob = motob
-        self.active_list = []#aktive behaviors har samme index i denne og weight listen
-        self.weight_list = []
+        self.weighted_active = defaultdict(float)
 
-
-    def set_bbcon(self,bbcon):
+    def set_bbcon(self, bbcon):
         self.bbcon = bbcon
 
-    def choose_action(self): #returns the MR from the behavior whose recommendation will be chosen
+    def choose_action(self):  # returns the MR from the behavior whose recommendation will be chosen
         self.update_active_list()
-        self.update_weight_list()
-        weight_sum = sum(self.weight_list) #make float manual?
-        choice = random.uniform(0.0, weight_sum)
-        for weight in range(len(self.weight_list)):
-            if choice <= self.weight_list[weight]:
-                 return self.active_list[weight].motor_recommendations[0] #MR fra den valgte behavioren
-
-
-
+        max_pri = 0
+        max_behavior = None
+        for behaviour in self.weighted_active:
+            if self.weighted_active[behaviour] > max_pri:
+                max_pri = self.weighted_active
+                max_behavior = behaviour
+            return max_behavior.motor_reccomendations[0]
 
     def update_active_list(self):
-        self.active_list.clear()
+        self.weighted_active.clear()
         for behavior in self.bbcon.active_behaviors:
             if behavior.active_flag:
-                self.active_list.append(behavior)
-
-    def update_weight_list(self): #put this in same func as update active lists?
-        self.weight_list.clear()
-        #self.weight_list.append(0)
-        for behavior in self.active_list:
-            self.weight_list.append(behavior.weight)
-        for i in range(1,len(self.weight_list)):
-            self.weight_list[i] = self.weight_list[i-1]+self.weight_list[i]
-
+                self.weighted_active[behavior] = behavior.weight
