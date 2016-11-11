@@ -118,7 +118,7 @@ def runTimesteps(bbcon, timesteps):
     ZumoButton().wait_for_press()
     while timestepNo < timesteps:
         bbcon.run_one_timestep()
-        timesteps += 1
+        timestepNo += 1
 
 
 def systemTest():
