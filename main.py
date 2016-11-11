@@ -121,28 +121,26 @@ def systemTest():
 
 
     motob = Motob(motor)
-    sensob = Sensob()
-    sensob.set_sensors([ultra, proxim])
-    behavior = CollisionAvoidance(priority=1, sensobs=[sensob])
+    arbitrator =Arbitrator(motob=motob)
 
-    arb = Arbitrator(motob=motob)
+    sensob = Sensob().set_sensors([ultra, proxim])
 
-    bbcon = BBCON(arbitrator=arb, motob=motob)
-    bbcon.add_behavior(behavior)
+
+
+    bbcon = BBCON(arbitrator=arbitrator, motob=motob)
+    bbcon.add_behavior(CollisionAvoidance(priority=1, sensobs=[sensob]))
     bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
-    #print(bbcon)
-    #print("behavior", behavior)
-    #print("sensob", sensob)
-    print(sensob.get_values())
 
+    timesteps = 0
+    while timesteps < 10:
+        print(sensob.get_values())
 
-    bbcon.run_one_timestep()
+        bbcon.run_one_timestep()
+        timesteps += 1
 
-    print(sensob.get_values())
-    #print("bbcon", bbcon)
-    #print("behavior", behavior)
-    #print("sensob", sensob)
+        print(sensob.get_values())
+
 
 
 
@@ -180,4 +178,5 @@ def camTest():
     b.dump_image("test3", type="JPEG")
     b.image = pic4
     b.dump_image("test4", type="JPEG")
+
 

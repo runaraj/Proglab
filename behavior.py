@@ -20,6 +20,7 @@ class Behavior:
 
 
 
+
     def set_bbcon(self, bbcon):
         self.bbcon = bbcon #setter peker til bbcon
         self.bbcon_index = bbcon.behaviors.index(self) #brukes til aktivering/deaktivering
@@ -147,6 +148,7 @@ class CollisionAvoidance(Behavior):  # do I need memory?
             self.match_degree = 0.25
 
     def consider_deactivation(self):
+        pass
         if self.frontDistance > 40 and not self.left and not self.right:
             self.count_time += 1
         else:
