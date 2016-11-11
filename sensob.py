@@ -5,10 +5,12 @@ from reflectance_sensors import ReflectanceSensors
 from irproximity_sensor import IRProximitySensor
 
 class Sensob:
-    sensors = [] #One or more of the sensors associated with this class
-    sensor_values = [] #values associated with the sensors
+    #sensors = [] #One or more of the sensors associated with this class
+    #sensor_values = [] #values associated with the sensors
 
-
+    def __init__(self):
+        self.sensors = []
+        self.sensor_values = []
 
     def update(self): #force the sensob to fetch the relevant sensor value(s) and convert them into the pre-processed sensob value
         self.sensor_values.clear()
