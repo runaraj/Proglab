@@ -128,7 +128,7 @@ def systemTest():
     proxim = IRProximitySensor()
     motob = Motob(motor)
     arbitrator = Arbitrator(motob)
-    reflectance = ReflectanceSensors
+    reflectance = ReflectanceSensors()
 
 
     sensobCollision = Sensob()
@@ -139,16 +139,17 @@ def systemTest():
 
 
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
-    b = CollisionAvoidance(1, sensobs=[sensobCollision])
-    f = FollowLine(1,sensobFollowLine)
-    t = TrackObject(1, sensob)
+    b = CollisionAvoidance(1, [sensobCollision])
+    f = FollowLine(1,[sensobFollowLine])
+    # t = TrackObject(1, sensob)
     bbcon.add_behavior(b)
     bbcon.add_behavior(f)
-    bbcon.add_behavior(t)
+    # bbcon.add_behavior(t)
     bbcon.activate_behavior(0)
     bbcon.activate_behavior(1)
     bbcon.activate_behavior(2)
-    bbcon.add_sensob([sensob])
+    bbcon.add_sensob(sensobCollision)
+    bbcon.add_sensob(sensobFollowLine)
 
     while True:
         runTimesteps(bbcon,15)
