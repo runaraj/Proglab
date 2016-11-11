@@ -172,6 +172,7 @@ class FollowLine(Behavior):
         super(FollowLine, self).__init__(priority=priority, sensobs=sensob)
         self.left = False
         self.right = False
+        self.count = 0
 
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()[0][0]
@@ -198,32 +199,40 @@ class FollowLine(Behavior):
         #    motoRec = ("R", 15)
         # elif line_center:
         #    motoRec = ("F", 0)
-        if line_center < lineLeft and line_center < lineRight:
+        if self.count == 4:
+            print("LineFollower sent request")
+            self.bbcon.get_halt_request()
+        elif line_center < lineLeft and line_center < lineRight:
             motoRec = ("F", 0)
+            self.count = 0
         elif lineLeft < line_center and lineLeft < lineRight:
             motoRec = ("L", 30)
+            self.count += 1
         else:
             motoRec = ("R", 30)
+            self.count += 1
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
         # print(self.motor_recommendations)
 
     def consider_activation(self):
+        print(self.get_sensob_data()[0])
         sensorArray = self.get_sensob_data()[0][0]
+        print(sensorArray)
         minste = min(sensorArray)
         maxte = max(sensorArray)
         if maxte-minste >0.22:
             self.activate()
 
     def consider_deactivation(self):
+        print(self.get_sensob_data()[0])
         sensorArray = self.get_sensob_data()[0][0]
+        print(sensorArray)
         minste = min(sensorArray)
         maxte = max(sensorArray)
         if maxte-minste<0.07:
             self.deactivate()
 
-    def determine_line_placement(self):
-        sensorArray = self.get_sensob_data()[0][0]
 
     def determine_match_degree(self):
         self.match_degree = 0.3
