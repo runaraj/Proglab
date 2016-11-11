@@ -123,23 +123,26 @@ def systemTest():
     motob = Motob(motor)
     arbitrator =Arbitrator(motob=motob)
 
-    sensob = Sensob().set_sensors([ultra, proxim])
+    sensob = Sensob()
+    sensob.set_sensors([ultra, proxim])
 
 
 
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
-    bbcon.add_behavior(CollisionAvoidance(priority=1, sensobs=[sensob]))
+    b = CollisionAvoidance(priority=1, sensobs=[sensob])
+    bbcon.add_behavior(b)
+
     bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
 
     timesteps = 0
-    while timesteps < 10:
-        print(sensob.get_values())
+    while timesteps < 15:
+        #print(sensob.get_values())
 
         bbcon.run_one_timestep()
         timesteps += 1
 
-        print(sensob.get_values())
+        #print(sensob.get_values())
 
 
 

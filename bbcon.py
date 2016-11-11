@@ -29,6 +29,7 @@ class BBCON:
 
     def add_behavior(self, behavior):#append a newly-created behavior onto the behaviors list.
         self.behaviors.append(behavior)
+        behavior.set_bbcon(self)
 
     def add_sensob(self, sensob):#append a newly-created sensob onto the sensobs list.
         self.sensobs.append(sensob)
@@ -75,7 +76,7 @@ class BBCON:
         for motob in self.motobs:
             motob.update(motor_recomm)
 
-        waitSeconds = 1
+        waitSeconds = 0.5
         self.wait(waitSeconds)
 
         for sens in self.sensobs:

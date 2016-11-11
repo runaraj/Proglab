@@ -114,7 +114,7 @@ class CollisionAvoidance(Behavior):  # do I need memory?
         self.set_bbcon_sideflags()
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
-        if self.frontDistance < 5:
+        if self.frontDistance < 6:
             return True
         return False
 
@@ -125,7 +125,7 @@ class CollisionAvoidance(Behavior):  # do I need memory?
         motoRec = ('F', 0)
         direction = self.direction # dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
-            if self.frontDistance < 2.5:
+            if self.frontDistance < 3.5:
                 if self.left or direction:
                     motoRec = ("R", 90)
                 elif self.right or not direction:
@@ -133,9 +133,9 @@ class CollisionAvoidance(Behavior):  # do I need memory?
                 else:
                     motoRec = ('B', 0)
             elif self.left or direction:
-                motoRec = ("R", 30)
+                motoRec = ("R", 90)
             elif self.right or not direction:
-                motoRec = ("L", 30)
+                motoRec = ("L", 90)
 
         self.direction = (not direction)
         self.motor_recommendations.clear()
