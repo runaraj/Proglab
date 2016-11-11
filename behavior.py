@@ -18,9 +18,6 @@ class Behavior:
         #self.value = 0 ???
         self.add_sensobs(sensobs)
 
-
-
-
     def set_bbcon(self, bbcon):
         self.bbcon = bbcon #setter peker til bbcon
         self.bbcon_index = bbcon.behaviors.index(self) #brukes til aktivering/deaktivering
@@ -175,7 +172,7 @@ class FollowLine(Behavior):
         self.count = 0
 
     def give_recommendation(self):
-        sensorArray = self.get_sensob_data()[0][0]
+        sensorArray = self.get_sensob_data()[0]
 
         ## TESTING ##
         print("sensor Array:", sensorArray)
