@@ -112,9 +112,16 @@ def test5():
         count +=1
         if count==12:
             break
+def runTimesteps(bbcon, timesteps):
+    timestepNo = 0
+    ZumoButton().wait_for_press()
+    while timestepNo < timesteps:
+        bbcon.run_one_timestep()
+        timesteps += 1
+
 
 def systemTest():
-    ZumoButton().wait_for_press()
+
     motor = Motors()
     ultra = Ultrasonic()
     proxim = IRProximitySensor()
@@ -135,14 +142,10 @@ def systemTest():
     bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
 
-    timesteps = 0
-    while timesteps < 15:
-        #print(sensob.get_values())
+    while True:
+        runTimesteps(bbcon,15)
 
-        bbcon.run_one_timestep()
-        timesteps += 1
 
-        #print(sensob.get_values())
 
 
 
