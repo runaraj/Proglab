@@ -155,11 +155,11 @@ def sensorTest():
 
 def camTest():
     ZumoButton().wait_for_press()
-    sensor = Camera()
+    sensor = Camera(img_width=128, img_height=96, img_rot=0) #endre disse?
 
     sensor.update()
     pic = sensor.get_value()
     b = Imager()
     b.image = pic
     #b = b.resize(500,500)
-    b.dump_image("test")
+    b.dump_image("test") #dump as jpeg/jpg/gif?
