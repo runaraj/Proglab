@@ -29,18 +29,21 @@ class Motob:
         if self.value[0] == 'R':
             # self.motor.set_right_dir(self.value[1])
             if self.value[1] == 10:
-                self.motor.set_value((0.2, 0.1), self.duration/2)
+                self.motor.set_value((0.4, 0.3), self.duration/2)
             if self.value[1] == 15:
-                self.motor.set_value((0.2, 0.2), self.duration/2)
+                self.motor.set_value((0.4, 0.3), self.duration)
             if self.value[1] == 30:
-                self.motor.set_value((0.2, 0.1), self.duration/2)
+                self.motor.set_value((0.9, 0.4), self.duration/2)
             if self.value[1] == 90:
-                self.motor.set_value((0.2, 0.2), self.duration/2)
-            self.motor.forward(dur=self.duration / 2)
+                self.motor.set_value((0.9, 0.4), self.duration)
+            self.motor.forward(dur=self.duration)
 
         if self.value[0] == "F":
             self.motor.forward(dur=self.duration)
 
         if self.value[0] == "B":
             self.motor.backward(dur=self.duration)
+
+        if self.value[0] == "S":
+            self.motor.stop()
 

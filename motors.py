@@ -70,7 +70,6 @@ class Motors():
             self.set_right_speed(150)
         self.persist(dur)
 
-
     def stop(self):
         self.dc = 0
         self.set_left_speed(self.dc)
