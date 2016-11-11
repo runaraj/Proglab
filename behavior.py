@@ -204,12 +204,23 @@ class FollowLine(Behavior):
             motoRec = ("L", 30)
         else:
             motoRec = ("R", 30)
-
-
-
         self.motor_recommendations.clear()
         self.motor_recommendations.append(motoRec)
         # print(self.motor_recommendations)
+
+    def consider_activation(self):
+        sensorArray = self.get_sensob_data()[0][0]
+        minste = min(sensorArray)
+        maxte = max(sensorArray)
+        if maxte-minste >0.22:
+            self.activate()
+
+    def consider_deactivation(self):
+        sensorArray = self.get_sensob_data()[0][0]
+        minste = min(sensorArray)
+        maxte = max(sensorArray)
+        if maxte-minste<0.07:
+            self.deactivate()
 
     def determine_line_placement(self):
         sensorArray = self.get_sensob_data()[0][0]
@@ -247,7 +258,10 @@ class TrackObject(Behavior):
     def consider_activation(self):
         self.checkFront()
         if self.frontDistance < 20:
-            self.activate()
+            self.get_sensob_data()
+            self.leftColor, self.rightColor = self.get_colors()
+            if self.leftColor+self.rightColor > 3000:
+                self.activate()
 
     def consider_deactivation(self):
         self.checkFront()
