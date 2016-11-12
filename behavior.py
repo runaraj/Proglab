@@ -15,7 +15,6 @@ class Behavior:
         self.priority = priority #brukes til å beregne weight [er statisk]
         self.match_degree = 0 #tall mellom [0,1], brukes til å beregne weight, sier noe om hvor viktig MRen er
         self.weight = 0 #brukes av arbitrator til aa velge handling
-        #self.value = 0 ???
         self.add_sensobs(sensobs)
 
     def set_bbcon(self, bbcon):
@@ -33,10 +32,12 @@ class Behavior:
 
     def activate(self):
         self.active_flag = True
+        print(self, "activated")
         self.bbcon.activate_behavior(self.bbcon_index)
 
     def deactivate(self):
         self.active_flag = False
+        print(self, "deactivated")
         self.bbcon.deactivate_behavior(self)
 
     def consider_deactivation(self):
@@ -50,7 +51,7 @@ class Behavior:
             self.consider_deactivation()
         else:
             self.consider_activation()
-        if self.active_flag: #funke?
+        if self.active_flag:
             self.sense_and_act()
             self.calculate_weight()
 
@@ -260,12 +261,11 @@ class TrackObject(Behavior):
             self.time = 0
 
     def consider_deactivation(self):
-        self.checkFront()
+        #self.checkFront() TRENGS DENNE?
         pixelcount = 64 * 96
         totalpixels = pixelcount * 2
         greenCount = self.leftColor+self.rightColor
         if self.frontDistance > 20 and (totalpixels-greenCount>pixelcount*1.5):
-            print("DEACTIVATING")
             self.deactivate()
 
     def activate(self):
@@ -300,6 +300,11 @@ class TrackObject(Behavior):
         elif diff < 750 or self.count == 3:
             mr = ("F", 0)
             self.count = 0
+        elif self.frontDistance>15: #KANSKJE?
+            self.count += 1
+            if self.count == 2:
+                mr = ("F", 0)
+            self.count = 0
         else:
             if self.leftColor > self.rightColor:
                 if not self.left:
@@ -317,8 +322,6 @@ class TrackObject(Behavior):
 
 
     def determine_match_degree(self):
-        #if self.motor_recommendations[0][0] == "H":
-        #    pass
         self.match_degree = 1
 
     def get_colors(self):

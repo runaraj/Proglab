@@ -226,3 +226,29 @@ def trackTest():
 
         bbcon.run_one_timestep()
         timesteps += 1
+
+
+def lineTest():
+    ZumoButton().wait_for_press()
+    motor = Motors()
+    reflect = ReflectanceSensors()
+    camera = Camera()
+
+    motob = Motob(motor)
+    arbitrator = Arbitrator(motob=motob)
+
+    sensob = Sensob()
+    sensob.set_sensors([reflect])
+
+    bbcon.add_sensob(sensob)
+    bbcon = BBCON(arbitrator=arbitrator, motob=motob)
+    b = TrackObject(priority=1, sensobs=[sensob])
+    bbcon.add_behavior(b)
+
+    bbcon.activate_behavior(0)
+
+
+    timesteps = 0
+    while timesteps < 15:
+        bbcon.run_one_timestep()
+        timesteps += 1
