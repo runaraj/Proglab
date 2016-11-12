@@ -145,7 +145,6 @@ class CollisionAvoidance(Behavior):  # do I need memory?
             self.match_degree = 0.25
 
     def consider_deactivation(self):
-        pass
         if self.frontDistance > 40 and not self.left and not self.right:
             self.count_time += 1
         else:
@@ -170,16 +169,13 @@ class FollowLine(Behavior):
         self.left = False
         self.right = False
         self.count = 0
+        self.time = 0 #teller timesteps for aktivering/deaktivering
 
     def give_recommendation(self):
         sensorArray = self.get_sensob_data()[0]
 
         ## TESTING ##
         print("sensor Array:", sensorArray)
-        #print("sensor Array lefts:", sensorArray[0],sensorArray[1])
-        #print("sensor Array middles:", sensorArray[2], sensorArray[3])
-        #print("sensor Array rights: ", sensorArray[4], sensorArray[5])
-        #print()
 
         # nå brukes ikke de to midterse sensorene
         lineLeft = (sensorArray[0] + sensorArray[1])/2
@@ -189,13 +185,6 @@ class FollowLine(Behavior):
 
         # print("Left:", lineLeft, "LineDiff:", lineDiff, "Right:", lineRight)
         motoRec = ("F", 0.001)
-        # grensene her kan endres
-        # if 0.03 < lineDiff and lineLeft < lineRight:
-        #    motoRec = ("L", 15)
-        # elif 0.03 < lineDiff and lineRight < lineLeft:
-        #    motoRec = ("R", 15)
-        # elif line_center:
-        #    motoRec = ("F", 0)
         if self.count == 4:
             print("LineFollower sent request")
             self.bbcon.get_halt_request()
@@ -213,13 +202,14 @@ class FollowLine(Behavior):
         # print(self.motor_recommendations)
 
     def consider_activation(self):
-        print(self.get_sensob_data()[0])
-        sensorArray = self.get_sensob_data()[0][0]
-        print(sensorArray)
-        minste = min(sensorArray)
-        maxte = max(sensorArray)
-        if maxte-minste >0.22:
-            self.activate()
+        self.time += 1
+        if self.time == 4:
+            sensorArray = self.get_sensob_data()[0][0]
+            minste = min(sensorArray)
+            maxte = max(sensorArray)
+            if maxte-minste >0.22:
+                self.activate()
+            self.time = 0
 
     def consider_deactivation(self):
         print(self.get_sensob_data()[0])
@@ -255,15 +245,19 @@ class TrackObject(Behavior):
         self.leftColor = 0
         self.rightColor = 0
         self.count = 0
+        self.time = 0
 
 
     def consider_activation(self):
-        self.checkFront()
-        if self.frontDistance < 10:
-            self.get_sensob_data()
-            self.leftColor, self.rightColor = self.get_colors()
-            if self.leftColor+self.rightColor > 3000:
-                self.activate()
+        self.time += 1
+        if self.time == 5:
+            self.checkFront()
+            if self.frontDistance < 10:
+                self.get_sensob_data()
+                self.leftColor, self.rightColor = self.get_colors()
+                if self.leftColor+self.rightColor > 3000:
+                    self.activate()
+            self.time = 0
 
     def consider_deactivation(self):
         self.checkFront()
