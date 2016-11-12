@@ -72,12 +72,13 @@ class BBCON:
             motor_recomm = self.arbitrator.choose_action()
         print("Etter arb: ", motor_recomm)
 
-        #OBS! Motor programmet "pauser" mens motoren er igang
-        #finnes fiks til dette?
-        if motor_recomm is not None:
-            for motob in self.motobs:
-                print("hei")
-                motob.update(motor_recomm)
+
+        #if motor_recomm is not None:
+        #    for motob in self.motobs:
+        #        motob.update(motor_recomm)
+
+        for mr in motor_recomm:
+            self.motobs[0].update(mr)
 
         waitSeconds = 0.5
         self.wait(waitSeconds)

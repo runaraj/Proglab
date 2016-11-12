@@ -1,4 +1,11 @@
 from collections import defaultdict
 a = defaultdict(int)
 a = [(10,"a"),(100,"b"),(50,"c")]
-print(max(a))
+
+
+liste = None
+
+if liste is None:
+    print("hei")
+
+
