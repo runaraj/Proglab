@@ -13,6 +13,10 @@ class BBCON:
     left = False #disse settes av collisionAvoidance, men brukes av alle slik at en annen behavior ikke kan svinge inn i en vegg
     camera = False
     halt = False
+    checkStucker = None
+
+    def set_checkStucker(self, stucker):
+        self.checkStucker = stucker
 
     def get_halt_request(self):
         self.halt = True
@@ -73,9 +77,12 @@ class BBCON:
         print("Etter arb: ", motor_recomm)
 
 
+
         #if motor_recomm is not None:
         #    for motob in self.motobs:
         #        motob.update(motor_recomm)
+        if self.checkStucker.check_stuck(motor_recomm):
+            motor_recomm = [("B", 0)]
 
         for mr in motor_recomm:
             self.motobs[0].update(mr)
