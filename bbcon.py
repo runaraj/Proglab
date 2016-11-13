@@ -88,8 +88,8 @@ class BBCON:
             for mr in motor_recomm:
                 self.motobs[0].update(mr)
 
-        waitSeconds = 0.25
-        self.wait(waitSeconds)
+        #waitSeconds = 0.5
+        #self.wait(waitSeconds)
 
         for sens in self.sensobs:
             sens.reset_sensors

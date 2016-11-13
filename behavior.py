@@ -262,7 +262,7 @@ class TrackObject(Behavior):
 
     def consider_activation(self):
         self.time += 1
-        if self.time == 2:
+        if self.time == 4:
             self.checkFront()
             if self.frontDistance < 15:
                 self.get_sensob_data()
