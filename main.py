@@ -4,6 +4,8 @@ from behavior import TrackObject
 from sensob import Sensob
 from bbcon import BBCON
 from imager2 import Imager
+from linefollower import LineFollow
+from checkStuck import CheckStuck
 
 import time
 
@@ -131,6 +133,8 @@ def systemTest():
     motob = Motob(motor)
     arbitrator = Arbitrator(motob)
 
+
+    stuck = CheckStuck()
     collisionSensob = Sensob()
     collisionSensob.set_sensors([ultra, proxim])
 
@@ -142,24 +146,23 @@ def systemTest():
 
 
     b = CollisionAvoidance(1, [collisionSensob])
-    f = FollowLine(1, [lineSensob])
+    f = LineFollow(1, [lineSensob])
     t = TrackObject(1, [trackSensob])
     #print(collisionSensob.sensors)
     #print(lineSensob.sensors)
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
-
+    bbcon.set_checkStucker(stuck)
     bbcon.add_behavior(b)
     bbcon.add_behavior(f)
     bbcon.add_behavior(t)
-    bbcon.activate_behavior(0)
-    bbcon.activate_behavior(1)
+    #bbcon.activate_behavior(0)
+    #bbcon.activate_behavior(1)
     #bbcon.activate_behavior(2)
     bbcon.add_sensob(collisionSensob)
     bbcon.add_sensob(lineSensob)
     bbcon.add_sensob(trackSensob)
 
-    while True:
-        runTimesteps(bbcon,15)
+    runTimesteps(bbcon, 100)
 
 
 
@@ -208,6 +211,8 @@ def trackTest():
     ultra = Ultrasonic()
     camera = Camera()
 
+
+    stuck = CheckStuck()
     motob = Motob(motor)
     arbitrator = Arbitrator(motob=motob)
 
@@ -216,22 +221,26 @@ def trackTest():
 
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
     b = TrackObject(priority=1, sensobs=[sensob])
+    bbcon.set_checkStucker(stuck)
     bbcon.add_behavior(b)
 
     bbcon.activate_behavior(0)
     bbcon.add_sensob(sensob)
 
     timesteps = 0
-    while timesteps < 15:
+    while timesteps < 25:
 
         bbcon.run_one_timestep()
         timesteps += 1
 
 
 def lineTest():
+    reflect = ReflectanceSensors()
     ZumoButton().wait_for_press()
     motor = Motors()
-    reflect = ReflectanceSensors()
+
+    stuck = CheckStuck()
+
     camera = Camera()
 
     motob = Motob(motor)
@@ -239,16 +248,60 @@ def lineTest():
 
     sensob = Sensob()
     sensob.set_sensors([reflect])
-
-    bbcon.add_sensob(sensob)
     bbcon = BBCON(arbitrator=arbitrator, motob=motob)
-    b = TrackObject(priority=1, sensobs=[sensob])
-    bbcon.add_behavior(b)
+    bbcon.add_sensob(sensob)
+    bbcon.set_checkStucker(stuck)
 
-    bbcon.activate_behavior(0)
+    b = LineFollow(1, [sensob])
+    bbcon.add_behavior(b)
 
 
     timesteps = 0
-    while timesteps < 15:
+    while timesteps < 30:
         bbcon.run_one_timestep()
         timesteps += 1
+
+
+def reflectTest():
+
+    #motor = Motors()
+    #motob = Motob(motor=motor)
+
+    reflect = ReflectanceSensors()
+    sensob = Sensob()
+    sensob.set_sensors([reflect])
+    ZumoButton().wait_for_press()
+    count = 0
+    while count < 10:
+        sensob.update()
+        print(sensob.get_values())
+        count += 1
+        time.sleep(2.5)
+
+def lineCollision():
+    reflect = ReflectanceSensors()
+    ZumoButton().wait_for_press()
+    motor = Motors()
+    stuck = CheckStuck()
+    ultra = Ultrasonic()
+    proxim = IRProximitySensor()
+    sensobCol = Sensob()
+    sensobCol.set_sensors([ultra, proxim])
+    motob = Motob(motor=motor)
+    sensobLine = Sensob()
+    sensobLine.set_sensors([reflect])
+
+    arb = Arbitrator(motob=motob)
+    bbcon = BBCON(arbitrator=arb, motob=motob)
+    bbcon.set_checkStucker(stuck)
+    line = LineFollow(1, [sensobLine])
+    col = CollisionAvoidance(1, [sensobCol])
+    bbcon.add_behavior(line)
+    bbcon.add_behavior(col)
+    bbcon.add_sensob(sensobCol)
+    bbcon.add_sensob(sensobLine)
+
+    count = 0
+    while count < 20:
+        bbcon.run_one_timestep()
+        count += 1

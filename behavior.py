@@ -107,8 +107,8 @@ class CollisionAvoidance(Behavior):  # do I need memory?
         values = self.sensobs[0].get_values()
         print(values)
         self.frontDistance = values[0]
-        self.right = values[1][0]
-        self.left = values[1][1]
+        self.right = values[1][1]
+        self.left = values[1][0]
         self.set_bbcon_sideflags()
 
     def frontCollisionImminent(self): #checks for frontalContact !!HVOR STOR TRENGER DENNE VERDIEN VAERE?!!
@@ -121,22 +121,31 @@ class CollisionAvoidance(Behavior):  # do I need memory?
         # side crashes in sight mid-tier degree
         # front crash in sight => high-tier degree
         motoRec = ('F', 0)
+        self.motor_recommendations.clear()
         direction = self.direction # dersom fare for frontkollisjon men ingen sidesensor fare=>True=prover aa unngaa til venstre, False=>hoyre
         if self.frontCollisionImminent():
             if self.frontDistance < 4.5:
-                if self.left or direction:
-                    motoRec = ("R", 90)
-                elif self.right or not direction:
+                if self.left and self.right:
+                    self.motor_recommendations.append(("B", 1.5))
+                    if direction:
+                        self.motor_recommendations.append(("R", 90))
+                    else:
+                        self.motor_recommendations.append(("L", 90))
+                elif self.right:
                     motoRec = ("L", 90)
+                elif self.left or direction:
+                    motoRec = ('R', 90)
                 else:
-                    motoRec = ('B', 0)
+                    motoRec = ("L", 90)
+            elif self.right:
+                motoRec = ("L", 90)
             elif self.left or direction:
                 motoRec = ("R", 90)
-            elif self.right or not direction:
+            else:
                 motoRec = ("L", 90)
 
         self.direction = (not direction)
-        self.motor_recommendations.clear()
+
         self.motor_recommendations.append(motoRec)
 
     def determine_match_degree(self):
@@ -248,12 +257,14 @@ class TrackObject(Behavior):
         self.count = 0
         self.time = 0
 
+        self.objectInSight = False
+
 
     def consider_activation(self):
         self.time += 1
-        if self.time == 5:
+        if self.time == 2:
             self.checkFront()
-            if self.frontDistance < 10:
+            if self.frontDistance < 15:
                 self.get_sensob_data()
                 self.leftColor, self.rightColor = self.get_colors()
                 if self.leftColor+self.rightColor > 3000:
@@ -274,6 +285,7 @@ class TrackObject(Behavior):
     def deactivate(self):
         super(TrackObject, self).deactivate()
         self.bbcon.deactivate_camera()
+        self.objectInSight = False
 
     def check_bbcon_data(self):
         self.left = self.bbcon.left
@@ -289,16 +301,18 @@ class TrackObject(Behavior):
         self.image.save("cam.JPEG", format="JPEG")
 
     def give_recommendation(self):
+        self.checkFront()
         self.leftColor, self.rightColor = self.get_colors() #antall grønne piksler i l/r bilde
         diff = abs(self.leftColor-self.rightColor)
         mr = ("F", 0)
+
+        self.motor_recommendations.clear()
         print("FrontDist: ", self.frontDistance)
         print("LC: ", self.leftColor)
         print("RC: ", self.rightColor)
-        if self.frontDistance<5 and (self.leftColor+self.rightColor > 6000):
+        if self.frontDistance<5 and ((self.leftColor+self.rightColor > 6000) or self.objectInSight):
             self.halt_request = True
         elif diff < 750 or self.count == 3:
-            mr = ("F", 0)
             self.count = 0
         elif self.frontDistance>15: #KANSKJE?
             self.count += 1
@@ -308,12 +322,15 @@ class TrackObject(Behavior):
         else:
             if self.leftColor > self.rightColor:
                 if not self.left:
-                    mr = ("L", 30)
+                    self.motor_recommendations.append(("L",15))
             else:
                 if not self.right:
-                    mr = ("R", 30)
-            self.count += 1
-        self.motor_recommendations.clear()
+                    self.motor_recommendations.append(("R",15))
+            mr = ("F", 0.25)
+            #self.count += 1
+        if diff < 750:
+            self.objectInSight = True
+
         if self.halt_request:
             print("Sending req")
             self.bbcon.get_halt_request()

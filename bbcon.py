@@ -84,10 +84,11 @@ class BBCON:
         if self.checkStucker.check_stuck(motor_recomm):
             motor_recomm = [("B", 0)]
 
-        for mr in motor_recomm:
-            self.motobs[0].update(mr)
+        if motor_recomm is not None:
+            for mr in motor_recomm:
+                self.motobs[0].update(mr)
 
-        waitSeconds = 0.5
+        waitSeconds = 0.25
         self.wait(waitSeconds)
 
         for sens in self.sensobs:
